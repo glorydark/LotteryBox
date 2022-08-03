@@ -3,9 +3,9 @@ package glorydark.lotterybox.tools;
 import cn.nukkit.Player;
 import cn.nukkit.block.Block;
 import cn.nukkit.item.Item;
-import cn.nukkit.level.Position;
 import cn.nukkit.level.particle.*;
 import cn.nukkit.math.Vector3;
+import glorydark.lotterybox.MainClass;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -22,22 +22,19 @@ public class LotteryBox {
 
      private final String displayName;
 
-     private final Block blockParticle;
-
      private final Integer limit;
 
      private Boolean spawnFirework;
 
      private String endParticle;
 
-     public LotteryBox(String name, String displayName, List<String> needs, List<String> description, List<Prize> prizes, List<Bonus> bonuses, Block blockParticle, Integer limit, Boolean spawnFirework, String endParticle){
+     public LotteryBox(String name, String displayName, List<String> needs, List<String> description, List<Prize> prizes, List<Bonus> bonuses, Integer limit, Boolean spawnFirework, String endParticle){
           this.name = name;
           this.needs = needs;
           this.description = description;
           this.prizes = prizes;
           this.bonuses = bonuses;
           this.displayName = displayName;
-          this.blockParticle = blockParticle;
           this.limit = limit;
           this.spawnFirework = spawnFirework;
           this.endParticle = endParticle;
@@ -69,21 +66,18 @@ public class LotteryBox {
           }
      }
 
-     public Boolean checkLimit(String player){
-          if(BasicTool.getLotteryPlayTimes(player, name) > limit){
-               return false;
-          }
-          return true;
+     public Boolean checkLimit(String player, Integer spins){
+          return BasicTool.getLotteryPlayTimes(player, name) + spins <= limit;
      }
 
-     public Boolean deductNeeds(Player player){
+     public Boolean deductNeeds(Player player, Integer spins){
           HashMap<String, Integer> map = new HashMap<>();
           List<Item> items = new ArrayList<>();
           for(String need: needs){
                if(need.startsWith("ticket|")){
                     need = need.replaceFirst("ticket\\|", "");
                     String[] split = need.split("@");
-                    if(!BasicTool.checkTicketCounts(player.getName(), split[0], Integer.valueOf(split[1]))){
+                    if(!BasicTool.checkTicketCounts(player.getName(), split[0], Integer.parseInt(split[1]) * spins)){
                          for(String key: map.keySet()){
                               BasicTool.changeTicketCounts(player.getName(), key, map.getOrDefault(key, 0));
                          }
@@ -92,12 +86,12 @@ public class LotteryBox {
                          }
                          return false;
                     }
-                    BasicTool.changeTicketCounts(player.getName(), split[0], -Integer.parseInt(split[1]));
-                    map.put(split[0], map.getOrDefault(split[0], 0) + Integer.parseInt(split[1]));
+                    BasicTool.changeTicketCounts(player.getName(), split[0], -Integer.parseInt(split[1]) * spins);
+                    map.put(split[0], map.getOrDefault(split[0], 0) + Integer.parseInt(split[1]) * spins);
                }
                if(need.startsWith("item|")){
                     String out = need.replaceFirst("item\\|", "");
-                    if(!BasicTool.checkItemExists(player, Inventory.getItem(out))){
+                    if(!BasicTool.checkItemExists(player, Inventory.getItem(out), spins)){
                          for(String key: map.keySet()){
                               BasicTool.changeTicketCounts(player.getName(), key, map.getOrDefault(key, 0));
                          }
@@ -138,10 +132,10 @@ public class LotteryBox {
                   '}';
      }
 
-     public void addBlockParticle(Player player) {
-          if(blockParticle == null){ return; }
-          Position position = player.getPosition();
-          position.getLevel().addParticle(new DestroyBlockParticle(position, blockParticle));
+     public void addBlockParticle(Player player, Prize prize) {
+          Rarity rarity = MainClass.rarities.getOrDefault(prize.getRarity(), null);
+          if (rarity == null){ return; }
+          rarity.addRarityParticle(player);
      }
 
      private Particle getParticle(String name, Vector3 pos, int data) {

@@ -1,2 +1,4 @@
 language: zh-cn
-version: 2022070401
+version: 2022080301
+#建议低配置服务器不要开启，通过反复发包来解决一个核心的蜜汁bug
+allow_in_sky: true

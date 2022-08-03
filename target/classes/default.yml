@@ -1,100 +1,91 @@
-#需要物品列表，可以通过/lotterybox saveitem导出到saveitem.yml物品文本，格式为id:meta:count:nbt(nbt为空则填null)
 needs: []
-#限购次数，请想想月亮岛，嗯！
 permanentLimit: 1
-#是否抽奖结束放烟花
 spawnFirework: true
-#结束放粒子，如果不要就填null
-endParticle: 'hugeexplosion'
-#抽奖箱在箱子界面左上角展示名称
-displayName: "test"
-#抽奖时放的方块破坏粒子，留空为null
-blockParticle: "133:0"
-#展示抽奖箱介绍
+endParticle: hugeexplosion
+displayName: test
 descriptions:
-  - "内含奖品:"
-  - "[ 233 ] * 1天"
-  - "[ 466 ] * 1天"
-#奖品配置
+  - '内含奖品:'
+  - '[ 233 ] * 1天'
+  - '[ 466 ] * 1天'
 prizes:
-  #奖品名称
-  "test1":
-    #是否展示原物品名
+  test1:
     showoriginname: true
-    #展示物品，可以通过/lotterybox saveitem导出到saveitem.yml物品文本，格式为id:meta:count:nbt(nbt为空则填null)
-    displayitem: "276:0:1:0a0000090400656e63680a010000000203006c766c010002020069640d000000"
-    #概率，0-10000
+    displayitem: 276:0:1:null
     possibility: 20
-    #奖品介绍
-    description: "233"
-    #是否广播获奖
+    description: '233'
     broadcast: true
-    #奖品包含物品，可以通过/lotterybox saveitem导出到saveitem.yml物品文本，格式为id:meta:count:nbt(nbt为空则填null)
     items:
-      - "1:0:1:null"
-    #控制台执行指令，玩家名 %player%
+      - 1:0:1:null
     consolecommands: []
-  "test2":
+    rarity: default
+  test2:
     showoriginname: true
-    displayitem: "1:0:1:null"
+    displayitem: 1:0:1:null
     possibility: 20
-    description: "没有奖励"
+    description: 没有奖励
     broadcast: true
     items: []
     consolecommands: []
-  "test3":
+    rarity: default
+  test3:
     showoriginname: true
-    displayitem: "1:0:1:null"
+    displayitem: 1:0:1:null
     possibility: 20
-    description: "没有奖励"
+    description: 没有奖励
     broadcast: true
     items: []
     consolecommands: []
-  "test4":
+    rarity: default
+  test4:
     showoriginname: true
-    displayitem: "1:0:1:null"
+    displayitem: 1:0:1:null
     possibility: 20
-    description: "没有奖励"
+    description: 没有奖励
     broadcast: true
     items: []
     consolecommands: []
-  "test5":
+    rarity: default
+  test5:
     showoriginname: true
-    displayitem: "1:0:1:null"
+    displayitem: 1:0:1:null
     possibility: 20
-    description: "没有奖励"
+    description: 没有奖励
     broadcast: true
     items: []
     consolecommands: []
-  "test6":
+    rarity: default
+  test6:
     showoriginname: true
-    displayitem: "1:0:1:null"
+    displayitem: 1:0:1:null
     possibility: 20
-    description: "没有奖励"
+    description: 没有奖励
     broadcast: true
     items: []
     consolecommands: []
-  "test7":
+    rarity: default
+  test7:
     showoriginname: true
-    displayitem: "1:0:1:null"
+    displayitem: 1:0:1:null
     possibility: 20
-    description: "没有奖励"
+    description: 没有奖励
     broadcast: true
     items: []
     consolecommands: []
-  "test8":
+    rarity: default
+  test8:
     showoriginname: true
-    displayitem: "1:0:1:null"
+    displayitem: 1:0:1:null
     possibility: 20
-    description: "没有奖励"
+    description: 没有奖励
     broadcast: true
     items: []
     consolecommands: []
+    rarity: default
 bonuses:
-  "test1":
+  test1:
     times: 20
-    prize: "test1"
+    prize: test1
     items:
-      - "1:0:1:null"
+      - 1:0:1:null
     consolecommands:
-      - "say test"
+      - say test

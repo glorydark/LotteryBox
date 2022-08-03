@@ -1,6 +1,7 @@
 PlayLotteryWindow:
   Possibility: "中奖几率"
-  StartLotteryItemName: "开始抽奖"
+  StartLotteryWithOneSpinsItemName: "单抽"
+  StartLotteryWithTenSpinsItemName: "十连抽"
   ShowDescriptionItemName: "查看抽奖箱介绍"
   BlockedArea: "不可选择"
   BlockAir: "空气"

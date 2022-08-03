@@ -10,8 +10,7 @@ import cn.nukkit.form.window.FormWindowSimple;
 import glorydark.lotterybox.MainClass;
 
 import java.sql.SQLException;
-
-import static glorydark.lotterybox.forms.CreateGui.showLotteryBoxWindow;
+import static glorydark.lotterybox.forms.CreateGui.showLotteryBoxWindowV2;
 
 public class GuiListener implements Listener {
 
@@ -37,12 +36,16 @@ public class GuiListener implements Listener {
 
     private void onSimpleClick(Player player, FormWindowSimple simple, GuiType guiType) throws SQLException {
         if(simple.getResponse() == null){ return; }
-        switch (guiType) {
-            case SelectLotteryBox:
-                showLotteryBoxWindow(player, MainClass.lotteryBoxList.get(simple.getResponse().getClickedButtonId()));
-                break;
-            default:
-                break;
+        if (guiType == GuiType.SelectLotteryBox) {
+            if(MainClass.inSky){
+                showLotteryBoxWindowV2(player, MainClass.lotteryBoxList.get(simple.getResponse().getClickedButtonId()));
+                return;
+            }
+            if(player.isOnGround()) {
+                showLotteryBoxWindowV2(player, MainClass.lotteryBoxList.get(simple.getResponse().getClickedButtonId()));
+            }else{
+                player.sendMessage("不支持在空中抽奖！");
+            }
         }
     }
 }

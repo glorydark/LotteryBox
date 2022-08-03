@@ -1,8 +1,14 @@
 package glorydark.lotterybox.tools;
 
 import cn.nukkit.Player;
+import cn.nukkit.block.Block;
+import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.item.Item;
+import cn.nukkit.level.Level;
+import cn.nukkit.math.BlockVector3;
+import cn.nukkit.math.Vector3;
 import cn.nukkit.utils.Config;
+import cn.nukkit.utils.LevelException;
 import glorydark.lotterybox.MainClass;
 
 public class BasicTool {
@@ -54,14 +60,14 @@ public class BasicTool {
         return true;
     }
 
-    public static Boolean checkItemExists(Player player, Item needItem){
+    public static Boolean checkItemExists(Player player, Item needItem, Integer spins){
         Integer counts = 0;
         for(Item hasItem: player.getInventory().getContents().values()){
             if(hasItem.equals(needItem, false)){
                 counts+=hasItem.getCount();
             }
         }
-        if(needItem.getCount() > counts){
+        if(needItem.getCount() > counts * spins){
             return false;
         }
         return true;
