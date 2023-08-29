@@ -71,7 +71,7 @@ public class MainClass extends PluginBase {
         if (folder.exists()) {
             for (File file : Objects.requireNonNull(folder.listFiles())) {
                 Config config = new Config(file, Config.YAML);
-                Map<String, Object> prizesMap = (Map<String, Object>) config.get("prizes");
+                Map<String, Object> prizesMap = config.get("prizes", new HashMap<>());
                 List<Prize> prizes = new ArrayList<>();
                 for (String key : prizesMap.keySet()) {
                     Map<String, Object> subMap = (Map<String, Object>) prizesMap.get(key);

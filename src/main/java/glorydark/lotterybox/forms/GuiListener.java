@@ -16,15 +16,13 @@ import glorydark.lotterybox.tasks.weight.InventoryChangeTaskV2;
 import glorydark.lotterybox.tools.BasicTool;
 import glorydark.lotterybox.tools.LotteryBox;
 
-import java.sql.SQLException;
-
 import static glorydark.lotterybox.forms.CreateGui.showLotteryBoxWindowV2;
 import static glorydark.lotterybox.forms.CreateGui.showPESelectSpinWindow;
 
 public class GuiListener implements Listener {
 
     @EventHandler
-    public void PlayerFormRespondedEvent(PlayerFormRespondedEvent event) throws SQLException {
+    public void PlayerFormRespondedEvent(PlayerFormRespondedEvent event) {
         Player p = event.getPlayer();
         FormWindow window = event.getWindow();
         if (p == null || window == null) {
