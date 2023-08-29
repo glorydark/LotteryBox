@@ -21,7 +21,8 @@ public class Prize {
     private Boolean showOriginName;
 
     private String rarity;
-    public Prize(String name, String description, Item displayItem, Boolean broadcast, Item[] items, List<String> consolecommands, Integer possibility, Boolean showOriginName, String rarity){
+
+    public Prize(String name, String description, Item displayItem, Boolean broadcast, Item[] items, List<String> consolecommands, Integer possibility, Boolean showOriginName, String rarity) {
         this.name = name;
         this.description = description;
         this.displayitem = displayItem;

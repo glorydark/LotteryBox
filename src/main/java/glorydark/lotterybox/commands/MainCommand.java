@@ -26,26 +26,28 @@ public class MainCommand extends Command {
 
     @Override
     public boolean execute(CommandSender commandSender, String s, String[] strings) {
-        if(strings.length < 1){ return false; }
-        switch (strings[0]){
+        if (strings.length < 1) {
+            return false;
+        }
+        switch (strings[0]) {
             case "menu":
-                switch (strings.length){
+                switch (strings.length) {
                     case 1:
-                        if(commandSender instanceof Player){
+                        if (commandSender instanceof Player) {
                             CreateGui.showSelectLotteryBoxWindow(((Player) commandSender).getPlayer());
-                        }else{
-                            commandSender.sendMessage(MainClass.lang.getTranslation("Tips","CommandShouldBeUsedInGame"));
+                        } else {
+                            commandSender.sendMessage(MainClass.lang.getTranslation("Tips", "CommandShouldBeUsedInGame"));
                         }
                         break;
                     case 2:
-                        if(commandSender.isPlayer()) {
+                        if (commandSender.isPlayer()) {
                             Player player = (Player) commandSender;
                             if (!BasicTool.isPE(player) && !player.isOnGround()) {
                                 player.sendMessage(MainClass.lang.getTranslation("Tips", "NoOnGround"));
                                 return true;
                             }
                             Optional<LotteryBox> optional = MainClass.lotteryBoxList.stream().filter(lotteryBox -> lotteryBox.getName().equals(strings[1])).findFirst();
-                            if(optional.isPresent()) {
+                            if (optional.isPresent()) {
                                 LotteryBox box = optional.get();
                                 MainClass.playerLotteryBoxes.put(player, box);
                                 if (!BasicTool.isPE(player) && !MainClass.forceDefaultMode) {
@@ -57,7 +59,7 @@ public class MainCommand extends Command {
                                 } else {
                                     CreateGui.showLotteryPossibilityWindow(player, box);
                                 }
-                            }else{
+                            } else {
                                 commandSender.sendMessage("Can not find the lottery from the name given accordingly!");
                             }
                         }
@@ -65,31 +67,31 @@ public class MainCommand extends Command {
                 }
                 break;
             case "give": //give player ticket amount
-                if(!(commandSender instanceof Player) || commandSender.isOp()){
-                    if(strings.length == 4){
-                        if(Server.getInstance().lookupName(strings[1]).isPresent()) {
+                if (!(commandSender instanceof Player) || commandSender.isOp()) {
+                    if (strings.length == 4) {
+                        if (Server.getInstance().lookupName(strings[1]).isPresent()) {
                             if (MainClass.registered_tickets.contains(strings[2])) {
                                 BasicTool.changeTicketCounts(strings[1], strings[2], Integer.valueOf(strings[3]));
                                 Player player = Server.getInstance().getPlayer(strings[1]);
-                                if(player != null){
+                                if (player != null) {
                                     player.sendMessage(MainClass.lang.getTranslation("Tips", "ReceiveTicket", strings[2], strings[3]));
                                 }
-                                commandSender.sendMessage(MainClass.lang.getTranslation("Tips","GiveTicketSuccess"));
-                            }else{
-                                commandSender.sendMessage(MainClass.lang.getTranslation("Tips","TicketWithoutRegistration", MainClass.registered_tickets));
+                                commandSender.sendMessage(MainClass.lang.getTranslation("Tips", "GiveTicketSuccess"));
+                            } else {
+                                commandSender.sendMessage(MainClass.lang.getTranslation("Tips", "TicketWithoutRegistration", MainClass.registered_tickets));
                             }
-                        }else{
-                            commandSender.sendMessage(MainClass.lang.getTranslation("Tips","PlayerNotFound"));
+                        } else {
+                            commandSender.sendMessage(MainClass.lang.getTranslation("Tips", "PlayerNotFound"));
                         }
-                    }else{
-                        commandSender.sendMessage(MainClass.lang.getTranslation("Tips","UseCommandInWrongFormat"));
+                    } else {
+                        commandSender.sendMessage(MainClass.lang.getTranslation("Tips", "UseCommandInWrongFormat"));
                     }
-                }else{
-                    commandSender.sendMessage(MainClass.lang.getTranslation("Tips","NoPermission"));
+                } else {
+                    commandSender.sendMessage(MainClass.lang.getTranslation("Tips", "NoPermission"));
                 }
                 break;
             case "help":
-                if(!(commandSender instanceof Player) || commandSender.isOp()) {
+                if (!(commandSender instanceof Player) || commandSender.isOp()) {
                     commandSender.sendMessage(MainClass.lang.getTranslation("Helps", "Title"));
                     commandSender.sendMessage(MainClass.lang.getTranslation("Helps", "GiveCommand"));
                     commandSender.sendMessage(MainClass.lang.getTranslation("Helps", "OpenMenuCommand"));
@@ -97,15 +99,15 @@ public class MainCommand extends Command {
                     commandSender.sendMessage(MainClass.lang.getTranslation("Helps", "SaveItemCommand"));
                     commandSender.sendMessage(MainClass.lang.getTranslation("Helps", "ReloadCommand"));
                     commandSender.sendMessage(MainClass.lang.getTranslation("Helps", "CreateLotteryBoxCommand"));
-                }else{
+                } else {
                     commandSender.sendMessage(MainClass.lang.getTranslation("Helps", "Title"));
                     commandSender.sendMessage(MainClass.lang.getTranslation("Helps", "OpenMenuCommand"));
                     commandSender.sendMessage(MainClass.lang.getTranslation("Helps", "HelpCommand"));
                 }
                 break;
             case "saveitem":
-                if(commandSender instanceof Player){
-                    if(commandSender.isOp()) {
+                if (commandSender instanceof Player) {
+                    if (commandSender.isOp()) {
                         if (strings.length == 2) {
                             Config config = new Config(MainClass.path + "/saveitem.yml", Config.YAML);
                             if (!config.exists(strings[1])) {
@@ -113,22 +115,22 @@ public class MainCommand extends Command {
                                 commandSender.sendMessage(MainClass.lang.getTranslation("Tips", "SaveItemSuccessfully"));
                             } else {
                                 config.set(strings[1] + "-copy", Inventory.saveItemToString(((Player) commandSender).getInventory().getItemInHand()));
-                                commandSender.sendMessage(MainClass.lang.getTranslation("Tips", "SaveItemExists",strings[1] + "-copy"));
+                                commandSender.sendMessage(MainClass.lang.getTranslation("Tips", "SaveItemExists", strings[1] + "-copy"));
                             }
                             config.save();
                         } else {
                             commandSender.sendMessage(MainClass.lang.getTranslation("Tips", "UseCommandInWrongFormat"));
                         }
-                    }else{
-                        commandSender.sendMessage(MainClass.lang.getTranslation("Tips","NoPermission"));
+                    } else {
+                        commandSender.sendMessage(MainClass.lang.getTranslation("Tips", "NoPermission"));
                     }
-                }else{
-                    commandSender.sendMessage(MainClass.lang.getTranslation("Tips","CommandShouldBeUsedInGame"));
+                } else {
+                    commandSender.sendMessage(MainClass.lang.getTranslation("Tips", "CommandShouldBeUsedInGame"));
                 }
                 break;
             case "reload":
-                if(!(commandSender instanceof Player) || commandSender.isOp()){
-                    Config config = new Config(MainClass.path+"/config.yml", Config.YAML);
+                if (!(commandSender instanceof Player) || commandSender.isOp()) {
+                    Config config = new Config(MainClass.path + "/config.yml", Config.YAML);
                     MainClass.forceDefaultMode = config.getBoolean("force_default_mode", false);
                     MainClass.default_speed_ticks = config.getInt("default_speed_ticks", 4);
                     MainClass.chest_speed_ticks = config.getInt("chest_speed_ticks", 4);
@@ -140,28 +142,28 @@ public class MainCommand extends Command {
                     MainClass.save_bag_enabled = config.getBoolean("save_bag_enabled", true);
                     MainClass.registered_tickets = new ArrayList<>(config.getStringList("registered_tickets"));
                     String language = config.getString("language");
-                    MainClass.lang = new Lang(new File(MainClass.path+"/languages/"+language+".yml"));
+                    MainClass.lang = new Lang(new File(MainClass.path + "/languages/" + language + ".yml"));
                     MainClass.loadBoxesConfig();
-                    commandSender.sendMessage(MainClass.lang.getTranslation("Tips","ReloadFinish"));
-                }else{
-                    commandSender.sendMessage(MainClass.lang.getTranslation("Tips","NoPermission"));
+                    commandSender.sendMessage(MainClass.lang.getTranslation("Tips", "ReloadFinish"));
+                } else {
+                    commandSender.sendMessage(MainClass.lang.getTranslation("Tips", "NoPermission"));
                 }
                 break;
             case "createbox":
-                if(!(commandSender instanceof Player) || commandSender.isOp()){
+                if (!(commandSender instanceof Player) || commandSender.isOp()) {
                     if (strings.length == 2) {
-                        File file = new File(MainClass.path+"/boxes/"+strings[1]+".yml");
-                        if(!file.exists()) {
+                        File file = new File(MainClass.path + "/boxes/" + strings[1] + ".yml");
+                        if (!file.exists()) {
                             MainClass.instance.saveResource("default.yml", "boxes/" + strings[1] + ".yml", false);
                             commandSender.sendMessage(MainClass.lang.getTranslation("Tips", "CreateLotteryBoxSuccessfully", strings[1]));
-                        }else{
+                        } else {
                             commandSender.sendMessage(MainClass.lang.getTranslation("Tips", "LotteryBoxExisted", strings[1]));
                         }
-                    }else{
+                    } else {
                         commandSender.sendMessage(MainClass.lang.getTranslation("Tips", "UseCommandInWrongFormat"));
                     }
-                }else{
-                    commandSender.sendMessage(MainClass.lang.getTranslation("Tips","NoPermission"));
+                } else {
+                    commandSender.sendMessage(MainClass.lang.getTranslation("Tips", "NoPermission"));
                 }
                 break;
         }

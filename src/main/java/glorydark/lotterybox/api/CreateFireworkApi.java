@@ -14,11 +14,11 @@ import cn.nukkit.utils.DyeColor;
 import java.util.Random;
 
 public class CreateFireworkApi {
-    public static CreateFireworkApi getInstance(){
+    public static CreateFireworkApi getInstance() {
         return new CreateFireworkApi();
     }
 
-    public static void spawnFirework(Position position,DyeColor color,ItemFirework.FireworkExplosion.ExplosionType type) {
+    public static void spawnFirework(Position position, DyeColor color, ItemFirework.FireworkExplosion.ExplosionType type) {
         Level level = position.getLevel();
         ItemFirework item = new ItemFirework();
         CompoundTag tag = new CompoundTag();

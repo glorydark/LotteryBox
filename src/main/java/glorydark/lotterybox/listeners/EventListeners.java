@@ -30,23 +30,7 @@ import java.util.HashMap;
 
 
 public class EventListeners implements Listener {
-    @EventHandler
-    public void EntityDamageByEntityEvent(EntityDamageByEntityEvent event){
-        if(event.getEntity() instanceof EntityMinecartChest && event.getEntity().namedTag.contains("IsLotteryBox")){
-            event.setCancelled(true);
-        }
-    }
-
-    @EventHandler
-    public void PlayerInteractEntityEvent(PlayerInteractEntityEvent event){
-        if(event.getEntity() instanceof EntityMinecartChest && event.getEntity().namedTag.contains("IsLotteryBox")){
-            event.setCancelled(true);
-        }
-    }
-
-
-
-    public static void resetBasisWindow(Player player){
+    public static void resetBasisWindow(Player player) {
         PlayerUIInventory inventory = player.getUIInventory();
         player.addWindow(inventory);
         CraftingGrid grid = player.getCraftingGrid();
@@ -56,12 +40,26 @@ public class EventListeners implements Listener {
     }
 
     @EventHandler
-    public void slotChange(InventoryMoveItemEvent event){
-        if(event.getInventory() == null){
+    public void EntityDamageByEntityEvent(EntityDamageByEntityEvent event) {
+        if (event.getEntity() instanceof EntityMinecartChest && event.getEntity().namedTag.contains("IsLotteryBox")) {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    public void PlayerInteractEntityEvent(PlayerInteractEntityEvent event) {
+        if (event.getEntity() instanceof EntityMinecartChest && event.getEntity().namedTag.contains("IsLotteryBox")) {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    public void slotChange(InventoryMoveItemEvent event) {
+        if (event.getInventory() == null) {
             return;
         }
         Player[] players = event.getViewers();
-        for(Player player: players) {
+        for (Player player : players) {
             if (MainClass.chestList.containsKey(player)) {
                 event.setCancelled(true);
             }
@@ -69,8 +67,8 @@ public class EventListeners implements Listener {
     }
 
     @EventHandler
-    public void InventoryClickEvent(InventoryClickEvent event){
-        if(event.getInventory() == null){
+    public void InventoryClickEvent(InventoryClickEvent event) {
+        if (event.getInventory() == null) {
             return;
         }
         Player p = event.getPlayer();
@@ -80,7 +78,7 @@ public class EventListeners implements Listener {
     }
 
     @EventHandler
-    public void PlayerDropItemEvent(PlayerDropItemEvent event){
+    public void PlayerDropItemEvent(PlayerDropItemEvent event) {
         Player p = event.getPlayer();
         if (MainClass.playingPlayers.contains(p)) {
             event.setCancelled(true);
@@ -88,7 +86,7 @@ public class EventListeners implements Listener {
     }
 
     @EventHandler
-    public void PlayerInteractEvent(PlayerInteractEvent event){
+    public void PlayerInteractEvent(PlayerInteractEvent event) {
         Player p = event.getPlayer();
         if (MainClass.playingPlayers.contains(p)) {
             event.setCancelled(true);
@@ -96,12 +94,12 @@ public class EventListeners implements Listener {
     }
 
     @EventHandler
-    public void InventoryMoveItemEvent(InventoryMoveItemEvent event){
-        if(event.getInventory() == null){
+    public void InventoryMoveItemEvent(InventoryMoveItemEvent event) {
+        if (event.getInventory() == null) {
             return;
         }
         Player[] players = event.getViewers();
-        for(Player player: players) {
+        for (Player player : players) {
             if (MainClass.chestList.containsKey(player)) {
                 event.setCancelled(true);
             }
@@ -109,11 +107,11 @@ public class EventListeners implements Listener {
     }
 
     @EventHandler
-    public void InventoryCloseEvent(InventoryCloseEvent event){
-        if(event.getInventory() == null){
+    public void InventoryCloseEvent(InventoryCloseEvent event) {
+        if (event.getInventory() == null) {
             return;
         }
-        if(MainClass.chestList.containsKey(event.getPlayer())){
+        if (MainClass.chestList.containsKey(event.getPlayer())) {
             EntityMinecartChest chest = MainClass.chestList.get(event.getPlayer());
             chest.getInventory().clearAll();
             chest.close();
@@ -122,17 +120,17 @@ public class EventListeners implements Listener {
     }
 
     @EventHandler
-    public void EntityDamageEvent(EntityDamageEvent event){
-        if(event.getEntity() instanceof Player){
-            if(MainClass.playingPlayers.contains((Player) event.getEntity())){
+    public void EntityDamageEvent(EntityDamageEvent event) {
+        if (event.getEntity() instanceof Player) {
+            if (MainClass.playingPlayers.contains((Player) event.getEntity())) {
                 event.setCancelled(true);
             }
         }
     }
 
     @EventHandler
-    public void LotteryForceCloseEvent(LotteryForceCloseEvent event){
-        if(MainClass.chestList.containsKey(event.getPlayer())){
+    public void LotteryForceCloseEvent(LotteryForceCloseEvent event) {
+        if (MainClass.chestList.containsKey(event.getPlayer())) {
             EntityMinecartChest chest = MainClass.chestList.get(event.getPlayer());
             chest.getInventory().clearAll();
             chest.close();
@@ -141,46 +139,46 @@ public class EventListeners implements Listener {
     }
 
     @EventHandler
-    public void moveItem(InventoryClickEvent event){
-        if(event.getInventory() == null){
+    public void moveItem(InventoryClickEvent event) {
+        if (event.getInventory() == null) {
             return;
         }
         Player player = event.getPlayer();
         if (MainClass.chestList.containsKey(player)) {
-            if(event.getSourceItem().getCustomName().equals(MainClass.lang.getTranslation("PlayLotteryWindow","StartLotteryWithOneSpinsItemName")) && !MainClass.playingPlayers.contains(player)){
+            if (event.getSourceItem().getCustomName().equals(MainClass.lang.getTranslation("PlayLotteryWindow", "StartLotteryWithOneSpinsItemName")) && !MainClass.playingPlayers.contains(player)) {
                 startLottery(player, false);
             }
-            if(event.getSourceItem().getCustomName().equals(MainClass.lang.getTranslation("PlayLotteryWindow","StartLotteryWithTenSpinsItemName")) && !MainClass.playingPlayers.contains(player)){
+            if (event.getSourceItem().getCustomName().equals(MainClass.lang.getTranslation("PlayLotteryWindow", "StartLotteryWithTenSpinsItemName")) && !MainClass.playingPlayers.contains(player)) {
                 startLottery(player, true);
             }
             event.setCancelled(true);
         }
     }
 
-    public void startLottery(Player player, Boolean isTenSpins){
+    public void startLottery(Player player, Boolean isTenSpins) {
         LotteryBox lotteryBox = MainClass.playerLotteryBoxes.get(player);
         int spin = 1;
-        if(isTenSpins){
+        if (isTenSpins) {
             spin = 10;
         }
-        if(lotteryBox.checkLimit(player.getName(), spin)) {
+        if (lotteryBox.checkLimit(player.getName(), spin)) {
             if (lotteryBox.deductNeeds(player, spin)) {
                 Server.getInstance().getScheduler().scheduleRepeatingTask(new LotteryBoxChangeTask(MainClass.chestList.get(player), player, lotteryBox, spin), MainClass.chest_speed_ticks);
             } else {
                 player.sendMessage(MainClass.lang.getTranslation("Tips", "LackOfItemsOrTickets"));
                 Server.getInstance().getPluginManager().callEvent(new LotteryForceCloseEvent(player));
             }
-        }else {
+        } else {
             player.sendMessage(MainClass.lang.getTranslation("Tips", "TimesLimit"));
             Server.getInstance().getPluginManager().callEvent(new LotteryForceCloseEvent(player));
         }
     }
 
     @EventHandler
-    public void LevelChangeEvent(EntityLevelChangeEvent event){
-        if(event.getEntity() instanceof Player){
+    public void LevelChangeEvent(EntityLevelChangeEvent event) {
+        if (event.getEntity() instanceof Player) {
             Player p = (Player) event.getEntity();
-            if(MainClass.playingPlayers.contains(p)) {
+            if (MainClass.playingPlayers.contains(p)) {
                 for (String path : MainClass.inventory_cache_paths) {
                     File file = new File((Server.getInstance().getFilePath() + "/" + path + "/").replace("%player%", p.getName()));
                     if (file.exists()) {
@@ -196,19 +194,19 @@ public class EventListeners implements Listener {
     }
 
     @EventHandler
-    public void Join(PlayerLocallyInitializedEvent event){
+    public void Join(PlayerLocallyInitializedEvent event) {
         Player player = event.getPlayer();
-        Config config = new Config(MainClass.path+"/cache.yml", Config.YAML);
-        if(config.exists(player.getName())){
-            if(MainClass.save_bag_enabled) {
+        Config config = new Config(MainClass.path + "/cache.yml", Config.YAML);
+        if (config.exists(player.getName())) {
+            if (MainClass.save_bag_enabled) {
                 for (String string : new ArrayList<>(config.getStringList(player.getName() + ".items"))) {
                     player.getInventory().addItem(Inventory.getItem(string));
                 }
             }
-            for(String string: new ArrayList<>(config.getStringList(player.getName()+".commands"))){
+            for (String string : new ArrayList<>(config.getStringList(player.getName() + ".commands"))) {
                 Server.getInstance().dispatchCommand(Server.getInstance().getConsoleSender(), string.replace("%player%", player.getName()));
             }
-            for(String string: new ArrayList<>(config.getStringList(player.getName()+".messages"))){
+            for (String string : new ArrayList<>(config.getStringList(player.getName() + ".messages"))) {
                 player.sendMessage(string.replace("%player%", player.getName()));
             }
             config.remove(event.getPlayer().getName());
@@ -219,19 +217,21 @@ public class EventListeners implements Listener {
     }
 
     @EventHandler
-    public void Quit(PlayerQuitEvent event){
-        if(MainClass.playingPlayers.contains(event.getPlayer())){
+    public void Quit(PlayerQuitEvent event) {
+        if (MainClass.playingPlayers.contains(event.getPlayer())) {
             MainClass.playingPlayers.remove(event.getPlayer());
             event.getPlayer().getInventory().clearAll();
         }
     }
 
     @EventHandler
-    public void DataPacketSendEvent(DataPacketSendEvent event){
-        if(!MainClass.chestList.containsKey(event.getPlayer())){return;}
-        if(event.getPacket() instanceof SetEntityMotionPacket){
+    public void DataPacketSendEvent(DataPacketSendEvent event) {
+        if (!MainClass.chestList.containsKey(event.getPlayer())) {
+            return;
+        }
+        if (event.getPacket() instanceof SetEntityMotionPacket) {
             SetEntityMotionPacket pk = (SetEntityMotionPacket) event.getPacket();
-            if(MainClass.chestList.get(event.getPlayer()).getId() == pk.eid){
+            if (MainClass.chestList.get(event.getPlayer()).getId() == pk.eid) {
                 MainClass.chestList.get(event.getPlayer()).teleport(event.getPlayer().getPosition(), null);
                 event.setCancelled(true);
             }

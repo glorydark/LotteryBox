@@ -10,7 +10,7 @@ public class Bonus {
     private final List<String> consolecommands;
     private final Integer needTimes;
 
-    public Bonus(String prizeName, Item[] items, List<String> consolecommands, Integer needTimes){
+    public Bonus(String prizeName, Item[] items, List<String> consolecommands, Integer needTimes) {
         this.name = prizeName;
         this.items = items;
         this.consolecommands = consolecommands;

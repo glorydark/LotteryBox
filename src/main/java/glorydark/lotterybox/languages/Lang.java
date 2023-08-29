@@ -9,22 +9,22 @@ import java.util.Map;
 public class Lang {
     private Map<String, Object> map = new HashMap<>();
 
-    public Lang(File file){
-        if(file.exists()){
+    public Lang(File file) {
+        if (file.exists()) {
             Config config = new Config(file, Config.YAML);
             map = config.getAll();
         }
     }
 
-    public String getTranslation(String key, String subKey, Object... params){
+    public String getTranslation(String key, String subKey, Object... params) {
         Map<String, String> getMap = (Map<String, String>) map.get(key);
-        if(getMap != null) {
+        if (getMap != null) {
             String s = getMap.getOrDefault(subKey, "null").replace("\\n", "\n");
-            for(int i =1; i<= params.length; i++){
-                s = s.replaceAll("%"+i+"%", params[i-1].toString());
+            for (int i = 1; i <= params.length; i++) {
+                s = s.replaceAll("%" + i + "%", params[i - 1].toString());
             }
             return s;
-        }else{
+        } else {
             return "null";
         }
     }
