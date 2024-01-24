@@ -12,3 +12,5 @@ inventory_cache_paths:
   - "plugins/GunWar/PlayerInventory/%player%.json"
 save_bag_enabled: true
 registered_tickets: []
+ticket_price_economyapi:
+  test: 1000.0

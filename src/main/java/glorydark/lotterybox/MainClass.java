@@ -7,6 +7,9 @@ import cn.nukkit.item.Item;
 import cn.nukkit.level.Sound;
 import cn.nukkit.plugin.PluginBase;
 import cn.nukkit.utils.Config;
+import com.smallaswater.npc.data.RsNpcConfig;
+import com.smallaswater.npc.variable.BaseVariableV2;
+import com.smallaswater.npc.variable.VariableManage;
 import glorydark.lotterybox.commands.MainCommand;
 import glorydark.lotterybox.forms.GuiListener;
 import glorydark.lotterybox.languages.Lang;
@@ -14,9 +17,11 @@ import glorydark.lotterybox.listeners.EventListeners;
 import glorydark.lotterybox.tools.*;
 import tip.utils.Api;
 import tip.utils.variables.BaseVariable;
+import tip.utils.variables.VariableManager;
 
 import java.io.File;
 import java.util.*;
+import java.util.function.Supplier;
 
 public class MainClass extends PluginBase {
 
@@ -55,6 +60,10 @@ public class MainClass extends PluginBase {
     public static boolean save_bag_enabled;
 
     public static List<String> registered_tickets;
+
+    public static LinkedHashMap<String, Double> ticketPrice = new LinkedHashMap<>();
+
+    public static boolean economyAPIEnabled;
 
     public static boolean isWorldAvailable(String level) {
         for (String prefix : banWorldPrefix) {
@@ -137,8 +146,15 @@ public class MainClass extends PluginBase {
         inventory_cache_paths = new ArrayList<>(config.getStringList("inventory_cache_paths"));
         save_bag_enabled = config.getBoolean("save_bag_enabled", true);
         registered_tickets = new ArrayList<>(config.getStringList("registered_tickets"));
+        ticketPrice = config.get("ticket_price_economyapi", new LinkedHashMap<>());
         String language = config.getString("language");
         lang = new Lang(new File(this.getDataFolder() + "/languages/" + language + ".yml"));
+        economyAPIEnabled = Server.getInstance().getPluginManager().getPlugin("EconomyAPI") != null;
+        if (economyAPIEnabled) {
+            this.getLogger().info(MainClass.lang.getTranslation("Tips", "DependencyFound", "EconomyAPI"));
+        } else {
+            this.getLogger().error(MainClass.lang.getTranslation("Tips", "DependencyMissing", "EconomyAPI"));
+        }
         //this.getServer().getCommandMap().register("", new TestCommand("test"));
         this.getServer().getCommandMap().register("", new MainCommand("lotterybox"));
         Config rarityCfg = new Config(path + "/rarity.yml", Config.YAML);
@@ -149,8 +165,13 @@ public class MainClass extends PluginBase {
         this.getServer().getPluginManager().registerEvents(new EventListeners(), this);
         this.getServer().getPluginManager().registerEvents(new GuiListener(), this);
         if (this.getServer().getPluginManager().getPlugin("Tips") != null) {
-            this.getLogger().info("Detect Tips Enabled!");
-            Api.registerVariables("LotteryBox", VariableTest.class);
+            this.getLogger().info(MainClass.lang.getTranslation("Tips", "DependencyFound", "Tips"));
+            Api.registerVariables("LotteryBox", LotteryBoxTipsVariable.class);
+        }
+
+        if (this.getServer().getPluginManager().getPlugin("RsNPC") != null) {
+            this.getLogger().info(MainClass.lang.getTranslation("Tips", "DependencyFound", "RsNPC"));
+            VariableManage.addVariableV2("LotteryBox", LotteryBoxRsNPCVariable.class);
         }
         this.getLogger().info("LotteryBox onEnabled!");
     }
@@ -173,9 +194,9 @@ public class MainClass extends PluginBase {
         this.getLogger().info("LotteryBox onDisabled!");
     }
 
-    public static class VariableTest extends BaseVariable {
+    public static class LotteryBoxTipsVariable extends BaseVariable {
 
-        public VariableTest(Player player) {
+        public LotteryBoxTipsVariable(Player player) {
             super(player);
         }
 
@@ -186,6 +207,23 @@ public class MainClass extends PluginBase {
             }
             for (LotteryBox box : lotteryBoxList) {
                 this.addStrReplaceString("{lotterybox_playtimes_" + box.getName() + "}", String.valueOf(BasicTool.getLotteryPlayTimes(player.getName(), box.getName())));
+            }
+        }
+    }
+
+    public static class LotteryBoxRsNPCVariable extends BaseVariableV2 {
+
+        public LotteryBoxRsNPCVariable(Player player) {
+            super();
+        }
+
+        @Override
+        public void onUpdate(Player player, RsNpcConfig rsNpcConfig) {
+            for (String ticket : registered_tickets) {
+                this.addVariable("{lotterybox_tickets_" + ticket + "}", String.valueOf(BasicTool.getTicketCounts(player.getName(), ticket)));
+            }
+            for (LotteryBox box : lotteryBoxList) {
+                this.addVariable("{lotterybox_playtimes_" + box.getName() + "}", String.valueOf(BasicTool.getLotteryPlayTimes(player.getName(), box.getName())));
             }
         }
     }

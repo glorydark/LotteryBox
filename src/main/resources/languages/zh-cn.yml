@@ -34,6 +34,9 @@ Tips:
   TicketWithoutRegistration: "§c该抽奖券未被注册！已注册抽奖券：%1%"
   PlayerNotFound: "§c无法找到玩家！"
   ReceiveTicket: "§a你收到了抽奖券[ %1% ] * %2%"
+  EconomyAPIBuyTicket: "§e已购买缺少的抽奖券！花费金币 * %1%"
+  DependencyFound: "§a检测到已加载依赖：%1%"
+  DependencyMissing: "§c检测到未加载依赖：%1%"
 SelectLotteryBoxWindow:
   Title: "LotteryBox - 抽奖箱选择"
   Content: "请选择您要抽取的抽奖箱！"
