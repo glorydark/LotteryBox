@@ -213,7 +213,7 @@ public class MainClass extends PluginBase {
 
     public static class LotteryBoxRsNPCVariable extends BaseVariableV2 {
 
-        public LotteryBoxRsNPCVariable(Player player) {
+        public LotteryBoxRsNPCVariable() {
             super();
         }
 
