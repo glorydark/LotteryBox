@@ -212,11 +212,6 @@ public class MainClass extends PluginBase {
     }
 
     public static class LotteryBoxRsNPCVariable extends BaseVariableV2 {
-
-        public LotteryBoxRsNPCVariable() {
-            super();
-        }
-
         @Override
         public void onUpdate(Player player, RsNpcConfig rsNpcConfig) {
             for (String ticket : registered_tickets) {
