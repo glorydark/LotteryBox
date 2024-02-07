@@ -1,6 +1,6 @@
 name: LotteryBox
 main: glorydark.lotterybox.MainClass
-version: "${pom.version}"
+version: "1.0.7"
 author: glorydark
 api: ["1.0.0"]
 description: LotteryBox
