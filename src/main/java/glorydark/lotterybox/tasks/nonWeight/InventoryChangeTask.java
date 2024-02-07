@@ -14,10 +14,7 @@ import glorydark.lotterybox.api.CreateFireworkApi;
 import glorydark.lotterybox.forms.CreateGui;
 import glorydark.lotterybox.tools.*;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 public class InventoryChangeTask extends Task implements Runnable {
 
@@ -66,7 +63,9 @@ public class InventoryChangeTask extends Task implements Runnable {
 
     public Integer getObtained() {
         Random random = new Random();
-        for (Prize prize : lotteryBox.getPrizes()) {
+        List<Prize> prizeNewList = new ArrayList<>(lotteryBox.getPrizes());
+        Collections.shuffle(prizeNewList);
+        for (Prize prize : prizeNewList) {
             List<Integer> integers = new ArrayList<>();
             for (int i = 0; i < prize.getPossibility(); i++) {
                 integers.add(Math.abs(random.nextInt()) % 10000);
