@@ -5,10 +5,10 @@ import cn.nukkit.Server;
 import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.utils.Config;
-import glorydark.lotterybox.MainClass;
-import glorydark.lotterybox.forms.CreateGui;
+import glorydark.lotterybox.LotteryBoxMain;
+import glorydark.lotterybox.forms.FormFactory;
 import glorydark.lotterybox.languages.Lang;
-import glorydark.lotterybox.tools.BasicTool;
+import glorydark.lotterybox.api.LotteryBoxAPI;
 import glorydark.lotterybox.tools.Inventory;
 import glorydark.lotterybox.tools.LotteryBox;
 
@@ -16,7 +16,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Optional;
 
-import static glorydark.lotterybox.forms.CreateGui.showLotteryBoxWindowV2;
+import static glorydark.lotterybox.forms.FormFactory.showLotteryBoxWindowV2;
 
 public class MainCommand extends Command {
 
@@ -34,30 +34,30 @@ public class MainCommand extends Command {
                 switch (strings.length) {
                     case 1:
                         if (commandSender instanceof Player) {
-                            CreateGui.showSelectLotteryBoxWindow(((Player) commandSender).getPlayer());
+                            FormFactory.showSelectLotteryBoxWindow(((Player) commandSender).getPlayer());
                         } else {
-                            commandSender.sendMessage(MainClass.lang.getTranslation("Tips", "CommandShouldBeUsedInGame"));
+                            commandSender.sendMessage(LotteryBoxMain.lang.getTranslation("Tips", "CommandShouldBeUsedInGame"));
                         }
                         break;
                     case 2:
                         if (commandSender.isPlayer()) {
                             Player player = (Player) commandSender;
-                            if (!BasicTool.isPE(player) && !player.isOnGround()) {
-                                player.sendMessage(MainClass.lang.getTranslation("Tips", "NoOnGround"));
+                            if (!LotteryBoxAPI.isPE(player) && !player.isOnGround()) {
+                                player.sendMessage(LotteryBoxMain.lang.getTranslation("Tips", "NoOnGround"));
                                 return true;
                             }
-                            Optional<LotteryBox> optional = MainClass.lotteryBoxList.stream().filter(lotteryBox -> lotteryBox.getName().equals(strings[1])).findFirst();
+                            Optional<LotteryBox> optional = LotteryBoxMain.lotteryBoxList.stream().filter(lotteryBox -> lotteryBox.getName().equals(strings[1])).findFirst();
                             if (optional.isPresent()) {
                                 LotteryBox box = optional.get();
-                                MainClass.playerLotteryBoxes.put(player, box);
-                                if (!BasicTool.isPE(player) && !MainClass.forceDefaultMode) {
+                                LotteryBoxMain.playerLotteryBoxes.put(player, box);
+                                if (!LotteryBoxAPI.isPE(player) && !LotteryBoxMain.forceDefaultMode) {
                                     if (box.isWeightEnabled()) {
-                                        CreateGui.showLotteryPossibilityWindow(player, box);
+                                        FormFactory.showLotteryPossibilityWindow(player, box);
                                     } else {
                                         showLotteryBoxWindowV2(player, box);
                                     }
                                 } else {
-                                    CreateGui.showLotteryPossibilityWindow(player, box);
+                                    FormFactory.showLotteryPossibilityWindow(player, box);
                                 }
                             } else {
                                 commandSender.sendMessage("Can not find the lottery from the name given accordingly!");
@@ -70,100 +70,100 @@ public class MainCommand extends Command {
                 if (!(commandSender instanceof Player) || commandSender.isOp()) {
                     if (strings.length == 4) {
                         if (Server.getInstance().lookupName(strings[1]).isPresent()) {
-                            if (MainClass.registered_tickets.contains(strings[2])) {
-                                BasicTool.changeTicketCounts(strings[1], strings[2], Integer.valueOf(strings[3]));
+                            if (LotteryBoxMain.registered_tickets.contains(strings[2])) {
+                                LotteryBoxAPI.changeTicketCounts(strings[1], strings[2], Integer.valueOf(strings[3]));
                                 Player player = Server.getInstance().getPlayer(strings[1]);
                                 if (player != null) {
-                                    player.sendMessage(MainClass.lang.getTranslation("Tips", "ReceiveTicket", strings[2], strings[3]));
+                                    player.sendMessage(LotteryBoxMain.lang.getTranslation("Tips", "ReceiveTicket", strings[2], strings[3]));
                                 }
-                                commandSender.sendMessage(MainClass.lang.getTranslation("Tips", "GiveTicketSuccess"));
+                                commandSender.sendMessage(LotteryBoxMain.lang.getTranslation("Tips", "GiveTicketSuccess"));
                             } else {
-                                commandSender.sendMessage(MainClass.lang.getTranslation("Tips", "TicketWithoutRegistration", MainClass.registered_tickets));
+                                commandSender.sendMessage(LotteryBoxMain.lang.getTranslation("Tips", "TicketWithoutRegistration", LotteryBoxMain.registered_tickets));
                             }
                         } else {
-                            commandSender.sendMessage(MainClass.lang.getTranslation("Tips", "PlayerNotFound"));
+                            commandSender.sendMessage(LotteryBoxMain.lang.getTranslation("Tips", "PlayerNotFound"));
                         }
                     } else {
-                        commandSender.sendMessage(MainClass.lang.getTranslation("Tips", "UseCommandInWrongFormat"));
+                        commandSender.sendMessage(LotteryBoxMain.lang.getTranslation("Tips", "UseCommandInWrongFormat"));
                     }
                 } else {
-                    commandSender.sendMessage(MainClass.lang.getTranslation("Tips", "NoPermission"));
+                    commandSender.sendMessage(LotteryBoxMain.lang.getTranslation("Tips", "NoPermission"));
                 }
                 break;
             case "help":
                 if (!(commandSender instanceof Player) || commandSender.isOp()) {
-                    commandSender.sendMessage(MainClass.lang.getTranslation("Helps", "Title"));
-                    commandSender.sendMessage(MainClass.lang.getTranslation("Helps", "GiveCommand"));
-                    commandSender.sendMessage(MainClass.lang.getTranslation("Helps", "OpenMenuCommand"));
-                    commandSender.sendMessage(MainClass.lang.getTranslation("Helps", "HelpCommand"));
-                    commandSender.sendMessage(MainClass.lang.getTranslation("Helps", "SaveItemCommand"));
-                    commandSender.sendMessage(MainClass.lang.getTranslation("Helps", "ReloadCommand"));
-                    commandSender.sendMessage(MainClass.lang.getTranslation("Helps", "CreateLotteryBoxCommand"));
+                    commandSender.sendMessage(LotteryBoxMain.lang.getTranslation("Helps", "Title"));
+                    commandSender.sendMessage(LotteryBoxMain.lang.getTranslation("Helps", "GiveCommand"));
+                    commandSender.sendMessage(LotteryBoxMain.lang.getTranslation("Helps", "OpenMenuCommand"));
+                    commandSender.sendMessage(LotteryBoxMain.lang.getTranslation("Helps", "HelpCommand"));
+                    commandSender.sendMessage(LotteryBoxMain.lang.getTranslation("Helps", "SaveItemCommand"));
+                    commandSender.sendMessage(LotteryBoxMain.lang.getTranslation("Helps", "ReloadCommand"));
+                    commandSender.sendMessage(LotteryBoxMain.lang.getTranslation("Helps", "CreateLotteryBoxCommand"));
                 } else {
-                    commandSender.sendMessage(MainClass.lang.getTranslation("Helps", "Title"));
-                    commandSender.sendMessage(MainClass.lang.getTranslation("Helps", "OpenMenuCommand"));
-                    commandSender.sendMessage(MainClass.lang.getTranslation("Helps", "HelpCommand"));
+                    commandSender.sendMessage(LotteryBoxMain.lang.getTranslation("Helps", "Title"));
+                    commandSender.sendMessage(LotteryBoxMain.lang.getTranslation("Helps", "OpenMenuCommand"));
+                    commandSender.sendMessage(LotteryBoxMain.lang.getTranslation("Helps", "HelpCommand"));
                 }
                 break;
             case "saveitem":
                 if (commandSender instanceof Player) {
                     if (commandSender.isOp()) {
                         if (strings.length == 2) {
-                            Config config = new Config(MainClass.path + "/saveitem.yml", Config.YAML);
+                            Config config = new Config(LotteryBoxMain.path + "/saveitem.yml", Config.YAML);
                             if (!config.exists(strings[1])) {
                                 config.set(strings[1], Inventory.saveItemToString(((Player) commandSender).getInventory().getItemInHand()));
-                                commandSender.sendMessage(MainClass.lang.getTranslation("Tips", "SaveItemSuccessfully"));
+                                commandSender.sendMessage(LotteryBoxMain.lang.getTranslation("Tips", "SaveItemSuccessfully"));
                             } else {
                                 config.set(strings[1] + "-copy", Inventory.saveItemToString(((Player) commandSender).getInventory().getItemInHand()));
-                                commandSender.sendMessage(MainClass.lang.getTranslation("Tips", "SaveItemExists", strings[1] + "-copy"));
+                                commandSender.sendMessage(LotteryBoxMain.lang.getTranslation("Tips", "SaveItemExists", strings[1] + "-copy"));
                             }
                             config.save();
                         } else {
-                            commandSender.sendMessage(MainClass.lang.getTranslation("Tips", "UseCommandInWrongFormat"));
+                            commandSender.sendMessage(LotteryBoxMain.lang.getTranslation("Tips", "UseCommandInWrongFormat"));
                         }
                     } else {
-                        commandSender.sendMessage(MainClass.lang.getTranslation("Tips", "NoPermission"));
+                        commandSender.sendMessage(LotteryBoxMain.lang.getTranslation("Tips", "NoPermission"));
                     }
                 } else {
-                    commandSender.sendMessage(MainClass.lang.getTranslation("Tips", "CommandShouldBeUsedInGame"));
+                    commandSender.sendMessage(LotteryBoxMain.lang.getTranslation("Tips", "CommandShouldBeUsedInGame"));
                 }
                 break;
             case "reload":
                 if (!(commandSender instanceof Player) || commandSender.isOp()) {
-                    Config config = new Config(MainClass.path + "/config.yml", Config.YAML);
-                    MainClass.forceDefaultMode = config.getBoolean("force_default_mode", false);
-                    MainClass.default_speed_ticks = config.getInt("default_speed_ticks", 4);
-                    MainClass.chest_speed_ticks = config.getInt("chest_speed_ticks", 4);
-                    MainClass.banWorlds = new ArrayList<>(config.getStringList("ban_worlds"));
-                    MainClass.banWorldPrefix = new ArrayList<>(config.getStringList("ban_worlds_prefixs"));
-                    MainClass.show_reward_window = config.getBoolean("show_reward_window", true);
-                    MainClass.showType = config.getString("show_type", "actionbar");
-                    MainClass.inventory_cache_paths = new ArrayList<>(config.getStringList("inventory_cache_paths"));
-                    MainClass.save_bag_enabled = config.getBoolean("save_bag_enabled", true);
-                    MainClass.registered_tickets = new ArrayList<>(config.getStringList("registered_tickets"));
+                    Config config = new Config(LotteryBoxMain.path + "/config.yml", Config.YAML);
+                    LotteryBoxMain.forceDefaultMode = config.getBoolean("force_default_mode", false);
+                    LotteryBoxMain.default_speed_ticks = config.getInt("default_speed_ticks", 4);
+                    LotteryBoxMain.chest_speed_ticks = config.getInt("chest_speed_ticks", 4);
+                    LotteryBoxMain.banWorlds = new ArrayList<>(config.getStringList("ban_worlds"));
+                    LotteryBoxMain.banWorldPrefix = new ArrayList<>(config.getStringList("ban_worlds_prefixs"));
+                    LotteryBoxMain.show_reward_window = config.getBoolean("show_reward_window", true);
+                    LotteryBoxMain.showType = config.getString("show_type", "actionbar");
+                    LotteryBoxMain.inventory_cache_paths = new ArrayList<>(config.getStringList("inventory_cache_paths"));
+                    LotteryBoxMain.save_bag_enabled = config.getBoolean("save_bag_enabled", true);
+                    LotteryBoxMain.registered_tickets = new ArrayList<>(config.getStringList("registered_tickets"));
                     String language = config.getString("language");
-                    MainClass.lang = new Lang(new File(MainClass.path + "/languages/" + language + ".yml"));
-                    MainClass.loadBoxesConfig();
-                    commandSender.sendMessage(MainClass.lang.getTranslation("Tips", "ReloadFinish"));
+                    LotteryBoxMain.lang = new Lang(new File(LotteryBoxMain.path + "/languages/" + language + ".yml"));
+                    LotteryBoxMain.loadBoxesConfig();
+                    commandSender.sendMessage(LotteryBoxMain.lang.getTranslation("Tips", "ReloadFinish"));
                 } else {
-                    commandSender.sendMessage(MainClass.lang.getTranslation("Tips", "NoPermission"));
+                    commandSender.sendMessage(LotteryBoxMain.lang.getTranslation("Tips", "NoPermission"));
                 }
                 break;
             case "createbox":
                 if (!(commandSender instanceof Player) || commandSender.isOp()) {
                     if (strings.length == 2) {
-                        File file = new File(MainClass.path + "/boxes/" + strings[1] + ".yml");
+                        File file = new File(LotteryBoxMain.path + "/boxes/" + strings[1] + ".yml");
                         if (!file.exists()) {
-                            MainClass.instance.saveResource("default.yml", "boxes/" + strings[1] + ".yml", false);
-                            commandSender.sendMessage(MainClass.lang.getTranslation("Tips", "CreateLotteryBoxSuccessfully", strings[1]));
+                            LotteryBoxMain.instance.saveResource("default.yml", "boxes/" + strings[1] + ".yml", false);
+                            commandSender.sendMessage(LotteryBoxMain.lang.getTranslation("Tips", "CreateLotteryBoxSuccessfully", strings[1]));
                         } else {
-                            commandSender.sendMessage(MainClass.lang.getTranslation("Tips", "LotteryBoxExisted", strings[1]));
+                            commandSender.sendMessage(LotteryBoxMain.lang.getTranslation("Tips", "LotteryBoxExisted", strings[1]));
                         }
                     } else {
-                        commandSender.sendMessage(MainClass.lang.getTranslation("Tips", "UseCommandInWrongFormat"));
+                        commandSender.sendMessage(LotteryBoxMain.lang.getTranslation("Tips", "UseCommandInWrongFormat"));
                     }
                 } else {
-                    commandSender.sendMessage(MainClass.lang.getTranslation("Tips", "NoPermission"));
+                    commandSender.sendMessage(LotteryBoxMain.lang.getTranslation("Tips", "NoPermission"));
                 }
                 break;
         }

@@ -18,7 +18,7 @@ import cn.nukkit.inventory.PlayerOffhandInventory;
 import cn.nukkit.inventory.PlayerUIInventory;
 import cn.nukkit.network.protocol.SetEntityMotionPacket;
 import cn.nukkit.utils.Config;
-import glorydark.lotterybox.MainClass;
+import glorydark.lotterybox.LotteryBoxMain;
 import glorydark.lotterybox.event.LotteryForceCloseEvent;
 import glorydark.lotterybox.tasks.nonWeight.LotteryBoxChangeTask;
 import glorydark.lotterybox.tools.Inventory;
@@ -60,7 +60,7 @@ public class EventListeners implements Listener {
         }
         Player[] players = event.getViewers();
         for (Player player : players) {
-            if (MainClass.chestList.containsKey(player)) {
+            if (LotteryBoxMain.chestList.containsKey(player)) {
                 event.setCancelled(true);
             }
         }
@@ -72,7 +72,7 @@ public class EventListeners implements Listener {
             return;
         }
         Player p = event.getPlayer();
-        if (MainClass.chestList.containsKey(p)) {
+        if (LotteryBoxMain.chestList.containsKey(p)) {
             event.setCancelled(true);
         }
     }
@@ -80,7 +80,7 @@ public class EventListeners implements Listener {
     @EventHandler
     public void PlayerDropItemEvent(PlayerDropItemEvent event) {
         Player p = event.getPlayer();
-        if (MainClass.playingPlayers.contains(p)) {
+        if (LotteryBoxMain.playingPlayers.contains(p)) {
             event.setCancelled(true);
         }
     }
@@ -88,7 +88,7 @@ public class EventListeners implements Listener {
     @EventHandler
     public void PlayerInteractEvent(PlayerInteractEvent event) {
         Player p = event.getPlayer();
-        if (MainClass.playingPlayers.contains(p)) {
+        if (LotteryBoxMain.playingPlayers.contains(p)) {
             event.setCancelled(true);
         }
     }
@@ -100,7 +100,7 @@ public class EventListeners implements Listener {
         }
         Player[] players = event.getViewers();
         for (Player player : players) {
-            if (MainClass.chestList.containsKey(player)) {
+            if (LotteryBoxMain.chestList.containsKey(player)) {
                 event.setCancelled(true);
             }
         }
@@ -111,18 +111,18 @@ public class EventListeners implements Listener {
         if (event.getInventory() == null) {
             return;
         }
-        if (MainClass.chestList.containsKey(event.getPlayer())) {
-            EntityMinecartChest chest = MainClass.chestList.get(event.getPlayer());
+        if (LotteryBoxMain.chestList.containsKey(event.getPlayer())) {
+            EntityMinecartChest chest = LotteryBoxMain.chestList.get(event.getPlayer());
             chest.getInventory().clearAll();
             chest.close();
-            MainClass.chestList.remove(event.getPlayer());
+            LotteryBoxMain.chestList.remove(event.getPlayer());
         }
     }
 
     @EventHandler
     public void EntityDamageEvent(EntityDamageEvent event) {
         if (event.getEntity() instanceof Player) {
-            if (MainClass.playingPlayers.contains((Player) event.getEntity())) {
+            if (LotteryBoxMain.playingPlayers.contains((Player) event.getEntity())) {
                 event.setCancelled(true);
             }
         }
@@ -130,11 +130,11 @@ public class EventListeners implements Listener {
 
     @EventHandler
     public void LotteryForceCloseEvent(LotteryForceCloseEvent event) {
-        if (MainClass.chestList.containsKey(event.getPlayer())) {
-            EntityMinecartChest chest = MainClass.chestList.get(event.getPlayer());
+        if (LotteryBoxMain.chestList.containsKey(event.getPlayer())) {
+            EntityMinecartChest chest = LotteryBoxMain.chestList.get(event.getPlayer());
             chest.getInventory().clearAll();
             chest.close();
-            MainClass.chestList.remove(event.getPlayer());
+            LotteryBoxMain.chestList.remove(event.getPlayer());
         }
     }
 
@@ -144,11 +144,11 @@ public class EventListeners implements Listener {
             return;
         }
         Player player = event.getPlayer();
-        if (MainClass.chestList.containsKey(player)) {
-            if (event.getSourceItem().getCustomName().equals(MainClass.lang.getTranslation("PlayLotteryWindow", "StartLotteryWithOneSpinsItemName")) && !MainClass.playingPlayers.contains(player)) {
+        if (LotteryBoxMain.chestList.containsKey(player)) {
+            if (event.getSourceItem().getCustomName().equals(LotteryBoxMain.lang.getTranslation("PlayLotteryWindow", "StartLotteryWithOneSpinsItemName")) && !LotteryBoxMain.playingPlayers.contains(player)) {
                 startLottery(player, false);
             }
-            if (event.getSourceItem().getCustomName().equals(MainClass.lang.getTranslation("PlayLotteryWindow", "StartLotteryWithTenSpinsItemName")) && !MainClass.playingPlayers.contains(player)) {
+            if (event.getSourceItem().getCustomName().equals(LotteryBoxMain.lang.getTranslation("PlayLotteryWindow", "StartLotteryWithTenSpinsItemName")) && !LotteryBoxMain.playingPlayers.contains(player)) {
                 startLottery(player, true);
             }
             event.setCancelled(true);
@@ -156,20 +156,19 @@ public class EventListeners implements Listener {
     }
 
     public void startLottery(Player player, Boolean isTenSpins) {
-        LotteryBox lotteryBox = MainClass.playerLotteryBoxes.get(player);
+        LotteryBox lotteryBox = LotteryBoxMain.playerLotteryBoxes.get(player);
         int spin = 1;
         if (isTenSpins) {
             spin = 10;
         }
         if (lotteryBox.checkLimit(player.getName(), spin)) {
             if (lotteryBox.deductNeeds(player, spin)) {
-                Server.getInstance().getScheduler().scheduleRepeatingTask(new LotteryBoxChangeTask(MainClass.chestList.get(player), player, lotteryBox, spin), MainClass.chest_speed_ticks);
+                Server.getInstance().getScheduler().scheduleRepeatingTask(new LotteryBoxChangeTask(LotteryBoxMain.chestList.get(player), player, lotteryBox, spin), LotteryBoxMain.chest_speed_ticks);
             } else {
-                player.sendMessage(MainClass.lang.getTranslation("Tips", "LackOfItemsOrTickets"));
                 Server.getInstance().getPluginManager().callEvent(new LotteryForceCloseEvent(player));
             }
         } else {
-            player.sendMessage(MainClass.lang.getTranslation("Tips", "TimesLimit"));
+            player.sendMessage(LotteryBoxMain.lang.getTranslation("Tips", "TimesLimit"));
             Server.getInstance().getPluginManager().callEvent(new LotteryForceCloseEvent(player));
         }
     }
@@ -178,8 +177,8 @@ public class EventListeners implements Listener {
     public void LevelChangeEvent(EntityLevelChangeEvent event) {
         if (event.getEntity() instanceof Player) {
             Player p = (Player) event.getEntity();
-            if (MainClass.playingPlayers.contains(p)) {
-                for (String path : MainClass.inventory_cache_paths) {
+            if (LotteryBoxMain.playingPlayers.contains(p)) {
+                for (String path : LotteryBoxMain.inventory_cache_paths) {
                     File file = new File((Server.getInstance().getFilePath() + "/" + path + "/").replace("%player%", p.getName()));
                     if (file.exists()) {
                         Config config = new Config(file);
@@ -187,8 +186,8 @@ public class EventListeners implements Listener {
                         config.save();
                     }
                 }
-                MainClass.playingPlayers.remove(p);
-                MainClass.playerLotteryBoxes.remove(p);
+                LotteryBoxMain.playingPlayers.remove(p);
+                LotteryBoxMain.playerLotteryBoxes.remove(p);
             }
         }
     }
@@ -196,9 +195,9 @@ public class EventListeners implements Listener {
     @EventHandler
     public void Join(PlayerLocallyInitializedEvent event) {
         Player player = event.getPlayer();
-        Config config = new Config(MainClass.path + "/cache.yml", Config.YAML);
+        Config config = new Config(LotteryBoxMain.path + "/cache.yml", Config.YAML);
         if (config.exists(player.getName())) {
-            if (MainClass.save_bag_enabled) {
+            if (LotteryBoxMain.save_bag_enabled) {
                 for (String string : new ArrayList<>(config.getStringList(player.getName() + ".items"))) {
                     player.getInventory().addItem(Inventory.getItem(string));
                 }
@@ -211,28 +210,28 @@ public class EventListeners implements Listener {
             }
             config.remove(event.getPlayer().getName());
             event.getPlayer().sendMessage("检测到您上次退出有异常，将未发放的物品发放给您！");
-            MainClass.instance.getLogger().alert("Detect [" + player.getName() + "] quit the server unexpectedly, trying to deal with it.");
+            LotteryBoxMain.instance.getLogger().alert("Detect [" + player.getName() + "] quit the server unexpectedly, trying to deal with it.");
             config.save();
         }
     }
 
     @EventHandler
     public void Quit(PlayerQuitEvent event) {
-        if (MainClass.playingPlayers.contains(event.getPlayer())) {
-            MainClass.playingPlayers.remove(event.getPlayer());
+        if (LotteryBoxMain.playingPlayers.contains(event.getPlayer())) {
+            LotteryBoxMain.playingPlayers.remove(event.getPlayer());
             event.getPlayer().getInventory().clearAll();
         }
     }
 
     @EventHandler
     public void DataPacketSendEvent(DataPacketSendEvent event) {
-        if (!MainClass.chestList.containsKey(event.getPlayer())) {
+        if (!LotteryBoxMain.chestList.containsKey(event.getPlayer())) {
             return;
         }
         if (event.getPacket() instanceof SetEntityMotionPacket) {
             SetEntityMotionPacket pk = (SetEntityMotionPacket) event.getPacket();
-            if (MainClass.chestList.get(event.getPlayer()).getId() == pk.eid) {
-                MainClass.chestList.get(event.getPlayer()).teleport(event.getPlayer().getPosition(), null);
+            if (LotteryBoxMain.chestList.get(event.getPlayer()).getId() == pk.eid) {
+                LotteryBoxMain.chestList.get(event.getPlayer()).teleport(event.getPlayer().getPosition(), null);
                 event.setCancelled(true);
             }
         }

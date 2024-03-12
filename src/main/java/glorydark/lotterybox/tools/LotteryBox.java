@@ -6,7 +6,9 @@ import cn.nukkit.item.Item;
 import cn.nukkit.level.Sound;
 import cn.nukkit.level.particle.*;
 import cn.nukkit.math.Vector3;
-import glorydark.lotterybox.MainClass;
+import glorydark.lotterybox.LotteryBoxMain;
+import glorydark.lotterybox.api.LotteryBoxAPI;
+import glorydark.lotterybox.forms.FormFactory;
 import lombok.Data;
 import me.onebone.economyapi.EconomyAPI;
 
@@ -60,64 +62,60 @@ public class LotteryBox {
         }
     }
 
-    public Boolean checkLimit(String player, Integer spins) {
-        return BasicTool.getLotteryPlayTimes(player, name) + spins <= limit;
+    public boolean checkLimit(String player, Integer spins) {
+        return LotteryBoxAPI.getLotteryPlayTimes(player, name) + spins <= limit;
     }
 
-    public Boolean deductNeeds(Player player, Integer spins) {
+    public boolean deductNeeds(Player player, Integer spins) {
         HashMap<String, Integer> ticketCaches = new HashMap<>();
-        double costMoney = 0;
         List<Item> items = new ArrayList<>();
         for (String need : needs) {
             if (need.startsWith("ticket|")) {
                 need = need.replaceFirst("ticket\\|", "");
                 String[] split = need.split("@");
                 int needAllTickets = Integer.parseInt(split[1]) * spins;
-                int ticketCount = BasicTool.getTicketCounts(player.getName(), split[0]);
+                int ticketCount = LotteryBoxAPI.getTicketCounts(player.getName(), split[0]);
                 if (ticketCount < needAllTickets) {
-                    if (ticketCount <= 0 && MainClass.economyAPIEnabled && MainClass.ticketPrice.containsKey(split[0])) {
-                        double needMoney = needAllTickets * MainClass.ticketPrice.get(split[0]);
-                        costMoney += needMoney;
-                        if (EconomyAPI.getInstance().myMoney(player) < costMoney) {
+                    if (ticketCount <= 0 && LotteryBoxMain.economyAPIEnabled && LotteryBoxMain.ticketPrice.containsKey(split[0])) {
+                        double needMoney = needAllTickets * LotteryBoxMain.ticketPrice.get(split[0]);
+                        if (EconomyAPI.getInstance().myMoney(player) < needMoney) {
                             for (String key : ticketCaches.keySet()) {
-                                BasicTool.changeTicketCounts(player.getName(), key, ticketCaches.getOrDefault(key, 0));
+                                LotteryBoxAPI.changeTicketCounts(player.getName(), key, ticketCaches.getOrDefault(key, 0));
                             }
                             for (Item item : items) {
                                 player.getInventory().addItem(item);
                             }
-                            return false;
+                            player.sendMessage(LotteryBoxMain.lang.getTranslation("Tips", "LackOfItemsOrTickets"));
+                        } else {
+                            FormFactory.showEconomyAPIToTicket(player, needMoney, split[0], (needAllTickets - ticketCount));
                         }
                     } else {
                         for (String key : ticketCaches.keySet()) {
-                            BasicTool.changeTicketCounts(player.getName(), key, ticketCaches.getOrDefault(key, 0));
+                            LotteryBoxAPI.changeTicketCounts(player.getName(), key, ticketCaches.getOrDefault(key, 0));
                         }
                         for (Item item : items) {
                             player.getInventory().addItem(item);
                         }
-                        return false;
+                        player.sendMessage(LotteryBoxMain.lang.getTranslation("Tips", "LackOfItemsOrTickets"));
                     }
+                    return false;
                 }
-                BasicTool.changeTicketCounts(player.getName(), split[0], -Integer.parseInt(split[1]) * spins);
+                LotteryBoxAPI.changeTicketCounts(player.getName(), split[0], -Integer.parseInt(split[1]) * spins);
                 ticketCaches.put(split[0], ticketCaches.getOrDefault(split[0], 0) + Integer.parseInt(split[1]) * spins);
             } else if (need.startsWith("item|")) {
                 String out = need.replaceFirst("item\\|", "");
-                if (!BasicTool.checkItemExists(player, Inventory.getItem(out), spins)) {
+                if (!LotteryBoxAPI.checkItemExists(player, Inventory.getItem(out), spins)) {
                     for (String key : ticketCaches.keySet()) {
-                        BasicTool.changeTicketCounts(player.getName(), key, ticketCaches.getOrDefault(key, 0));
+                        LotteryBoxAPI.changeTicketCounts(player.getName(), key, ticketCaches.getOrDefault(key, 0));
                     }
                     for (Item item : items) {
                         player.getInventory().addItem(item);
                     }
+                    player.sendMessage(LotteryBoxMain.lang.getTranslation("Tips", "LackOfItemsOrTickets"));
                     return false;
                 }
                 player.getInventory().removeItem(Inventory.getItem(out));
                 items.add(Inventory.getItem(out));
-            }
-        }
-        if (MainClass.economyAPIEnabled) {
-            EconomyAPI.getInstance().reduceMoney(player, costMoney);
-            if (costMoney > 0) {
-                player.sendMessage(MainClass.lang.getTranslation("Tips", "EconomyAPIBuyTicket", costMoney));
             }
         }
         return true;
@@ -144,7 +142,7 @@ public class LotteryBox {
     }
 
     public void addBlockParticle(Player player, Prize prize) {
-        Rarity rarity = MainClass.rarities.getOrDefault(prize.getRarity(), null);
+        Rarity rarity = LotteryBoxMain.rarities.getOrDefault(prize.getRarity(), null);
         if (rarity == null) {
             return;
         }

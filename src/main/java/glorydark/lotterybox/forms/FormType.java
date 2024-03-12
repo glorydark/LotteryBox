@@ -1,8 +1,9 @@
 package glorydark.lotterybox.forms;
 
-public enum GuiType {
+public enum FormType {
     SelectLotteryBox,
     SelectLotterySpin,
     Reward,
     LotteryPossibility,
+    ExchangeConfirmWindow
 }

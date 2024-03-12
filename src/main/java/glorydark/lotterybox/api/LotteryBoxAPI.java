@@ -1,25 +1,25 @@
-package glorydark.lotterybox.tools;
+package glorydark.lotterybox.api;
 
 import cn.nukkit.Player;
 import cn.nukkit.item.Item;
 import cn.nukkit.utils.Config;
-import glorydark.lotterybox.MainClass;
+import glorydark.lotterybox.LotteryBoxMain;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class BasicTool {
+public class LotteryBoxAPI {
 
     public static Boolean checkTicketCounts(String player, String ticket, Integer counts) {
-        return new Config(MainClass.path + "/tickets/" + player + ".yml", Config.YAML).getInt(ticket, 0) >= counts;
+        return new Config(LotteryBoxMain.path + "/tickets/" + player + ".yml", Config.YAML).getInt(ticket, 0) >= counts;
     }
 
     public static Integer getTicketCounts(String player, String ticket) {
-        return new Config(MainClass.path + "/tickets/" + player + ".yml", Config.YAML).getInt(ticket, 0);
+        return new Config(LotteryBoxMain.path + "/tickets/" + player + ".yml", Config.YAML).getInt(ticket, 0);
     }
 
     public static void setTicketCounts(String player, String ticket, Integer amount) {
-        Config config = new Config(MainClass.path + "/tickets/" + player + ".yml", Config.YAML);
+        Config config = new Config(LotteryBoxMain.path + "/tickets/" + player + ".yml", Config.YAML);
         config.set(ticket, amount);
         config.save();
     }
@@ -29,11 +29,11 @@ public class BasicTool {
     }
 
     public static Integer getLotteryPlayTimes(String player, String lotteryName) {
-        return new Config(MainClass.path + "/lotteryrecords/" + player + ".yml", Config.YAML).getInt(lotteryName, 0);
+        return new Config(LotteryBoxMain.path + "/lotteryrecords/" + player + ".yml", Config.YAML).getInt(lotteryName, 0);
     }
 
     public static void setLotteryPlayTimes(String player, String lotteryName, Integer amount) {
-        Config config = new Config(MainClass.path + "/lotteryrecords/" + player + ".yml", Config.YAML);
+        Config config = new Config(LotteryBoxMain.path + "/lotteryrecords/" + player + ".yml", Config.YAML);
         config.set(lotteryName, amount);
         config.save();
     }
