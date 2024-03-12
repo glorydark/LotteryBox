@@ -65,21 +65,22 @@ public class LotteryBox {
     }
 
     public Boolean deductNeeds(Player player, Integer spins) {
-        HashMap<String, Integer> map = new HashMap<>();
+        HashMap<String, Integer> ticketCaches = new HashMap<>();
         double costMoney = 0;
         List<Item> items = new ArrayList<>();
         for (String need : needs) {
             if (need.startsWith("ticket|")) {
                 need = need.replaceFirst("ticket\\|", "");
                 String[] split = need.split("@");
-                int needAllTickets = Integer.parseInt(split[1]) + spins;
-                if (!BasicTool.checkTicketCounts(player.getName(), split[0], needAllTickets)) {
-                    if (MainClass.economyAPIEnabled && MainClass.ticketPrice.containsKey(split[0])) {
+                int needAllTickets = Integer.parseInt(split[1]) * spins;
+                int ticketCount = BasicTool.getTicketCounts(player.getName(), split[0]);
+                if (ticketCount < needAllTickets) {
+                    if (ticketCount <= 0 && MainClass.economyAPIEnabled && MainClass.ticketPrice.containsKey(split[0])) {
                         double needMoney = needAllTickets * MainClass.ticketPrice.get(split[0]);
                         costMoney += needMoney;
                         if (EconomyAPI.getInstance().myMoney(player) < costMoney) {
-                            for (String key : map.keySet()) {
-                                BasicTool.changeTicketCounts(player.getName(), key, map.getOrDefault(key, 0));
+                            for (String key : ticketCaches.keySet()) {
+                                BasicTool.changeTicketCounts(player.getName(), key, ticketCaches.getOrDefault(key, 0));
                             }
                             for (Item item : items) {
                                 player.getInventory().addItem(item);
@@ -87,8 +88,8 @@ public class LotteryBox {
                             return false;
                         }
                     } else {
-                        for (String key : map.keySet()) {
-                            BasicTool.changeTicketCounts(player.getName(), key, map.getOrDefault(key, 0));
+                        for (String key : ticketCaches.keySet()) {
+                            BasicTool.changeTicketCounts(player.getName(), key, ticketCaches.getOrDefault(key, 0));
                         }
                         for (Item item : items) {
                             player.getInventory().addItem(item);
@@ -97,12 +98,12 @@ public class LotteryBox {
                     }
                 }
                 BasicTool.changeTicketCounts(player.getName(), split[0], -Integer.parseInt(split[1]) * spins);
-                map.put(split[0], map.getOrDefault(split[0], 0) + Integer.parseInt(split[1]) * spins);
+                ticketCaches.put(split[0], ticketCaches.getOrDefault(split[0], 0) + Integer.parseInt(split[1]) * spins);
             } else if (need.startsWith("item|")) {
                 String out = need.replaceFirst("item\\|", "");
                 if (!BasicTool.checkItemExists(player, Inventory.getItem(out), spins)) {
-                    for (String key : map.keySet()) {
-                        BasicTool.changeTicketCounts(player.getName(), key, map.getOrDefault(key, 0));
+                    for (String key : ticketCaches.keySet()) {
+                        BasicTool.changeTicketCounts(player.getName(), key, ticketCaches.getOrDefault(key, 0));
                     }
                     for (Item item : items) {
                         player.getInventory().addItem(item);
