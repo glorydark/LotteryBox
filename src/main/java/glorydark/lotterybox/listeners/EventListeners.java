@@ -20,6 +20,8 @@ import cn.nukkit.network.protocol.SetEntityMotionPacket;
 import cn.nukkit.utils.Config;
 import glorydark.lotterybox.LotteryBoxMain;
 import glorydark.lotterybox.event.LotteryForceCloseEvent;
+import glorydark.lotterybox.forms.FormFactory;
+import glorydark.lotterybox.forms.FormListener;
 import glorydark.lotterybox.tasks.nonWeight.LotteryBoxChangeTask;
 import glorydark.lotterybox.tools.Inventory;
 import glorydark.lotterybox.tools.LotteryBox;
@@ -217,10 +219,12 @@ public class EventListeners implements Listener {
 
     @EventHandler
     public void Quit(PlayerQuitEvent event) {
-        if (LotteryBoxMain.playingPlayers.contains(event.getPlayer())) {
-            LotteryBoxMain.playingPlayers.remove(event.getPlayer());
+        Player player = event.getPlayer();
+        if (LotteryBoxMain.playingPlayers.contains(player)) {
+            LotteryBoxMain.playingPlayers.remove(player);
             event.getPlayer().getInventory().clearAll();
         }
+        FormFactory.exchangeCaches.remove(player);
     }
 
     @EventHandler
