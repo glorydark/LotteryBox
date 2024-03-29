@@ -8,9 +8,7 @@ import cn.nukkit.event.Listener;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.event.entity.EntityLevelChangeEvent;
-import cn.nukkit.event.inventory.InventoryClickEvent;
-import cn.nukkit.event.inventory.InventoryCloseEvent;
-import cn.nukkit.event.inventory.InventoryMoveItemEvent;
+import cn.nukkit.event.inventory.*;
 import cn.nukkit.event.player.*;
 import cn.nukkit.event.server.DataPacketSendEvent;
 import cn.nukkit.inventory.CraftingGrid;
@@ -90,6 +88,14 @@ public class EventListeners implements Listener {
     @EventHandler
     public void PlayerInteractEvent(PlayerInteractEvent event) {
         Player p = event.getPlayer();
+        if (LotteryBoxMain.playingPlayers.contains(p)) {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    public void onInventoryTransact(InventoryTransactionEvent event) {
+        Player p = event.getTransaction().getSource();
         if (LotteryBoxMain.playingPlayers.contains(p)) {
             event.setCancelled(true);
         }
@@ -176,7 +182,7 @@ public class EventListeners implements Listener {
     }
 
     @EventHandler
-    public void LevelChangeEvent(EntityLevelChangeEvent event) {
+    public void onLevelChangeEvent(EntityLevelChangeEvent event) {
         if (event.getEntity() instanceof Player) {
             Player p = (Player) event.getEntity();
             if (LotteryBoxMain.playingPlayers.contains(p)) {
@@ -195,7 +201,7 @@ public class EventListeners implements Listener {
     }
 
     @EventHandler
-    public void Join(PlayerLocallyInitializedEvent event) {
+    public void onJoin(PlayerLocallyInitializedEvent event) {
         Player player = event.getPlayer();
         Config config = new Config(LotteryBoxMain.path + "/cache.yml", Config.YAML);
         if (config.exists(player.getName())) {
@@ -218,7 +224,7 @@ public class EventListeners implements Listener {
     }
 
     @EventHandler
-    public void Quit(PlayerQuitEvent event) {
+    public void onQuit(PlayerQuitEvent event) {
         Player player = event.getPlayer();
         if (LotteryBoxMain.playingPlayers.contains(player)) {
             LotteryBoxMain.playingPlayers.remove(player);

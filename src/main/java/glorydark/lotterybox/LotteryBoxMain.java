@@ -170,7 +170,6 @@ public class LotteryBoxMain extends PluginBase {
 
         if (this.getServer().getPluginManager().getPlugin("RsNPC") != null) {
             this.getLogger().info(LotteryBoxMain.lang.getTranslation("Tips", "DependencyFound", "RsNPC"));
-            VariableManage.addVariableV2("LotteryBox", LotteryBoxRsNPCVariable.class);
         }
         this.getLogger().info("LotteryBox onEnabled!");
     }
@@ -206,18 +205,6 @@ public class LotteryBoxMain extends PluginBase {
             }
             for (LotteryBox box : lotteryBoxList) {
                 this.addStrReplaceString("{lotterybox_playtimes_" + box.getName() + "}", String.valueOf(LotteryBoxAPI.getLotteryPlayTimes(player.getName(), box.getName())));
-            }
-        }
-    }
-
-    public static class LotteryBoxRsNPCVariable extends BaseVariableV2 {
-        @Override
-        public void onUpdate(Player player, RsNpcConfig rsNpcConfig) {
-            for (String ticket : registered_tickets) {
-                this.addVariable("{lotterybox_tickets_" + ticket + "}", String.valueOf(LotteryBoxAPI.getTicketCounts(player.getName(), ticket)));
-            }
-            for (LotteryBox box : lotteryBoxList) {
-                this.addVariable("{lotterybox_playtimes_" + box.getName() + "}", String.valueOf(LotteryBoxAPI.getLotteryPlayTimes(player.getName(), box.getName())));
             }
         }
     }
