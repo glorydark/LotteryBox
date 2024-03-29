@@ -167,10 +167,6 @@ public class LotteryBoxMain extends PluginBase {
             this.getLogger().info(LotteryBoxMain.lang.getTranslation("Tips", "DependencyFound", "Tips"));
             Api.registerVariables("LotteryBox", LotteryBoxTipsVariable.class);
         }
-
-        if (this.getServer().getPluginManager().getPlugin("RsNPC") != null) {
-            this.getLogger().info(LotteryBoxMain.lang.getTranslation("Tips", "DependencyFound", "RsNPC"));
-        }
         this.getLogger().info("LotteryBox onEnabled!");
     }
 
