@@ -32,7 +32,6 @@ public class InventoryChangeTask extends Task implements Runnable {
     private int ticks;
 
     public InventoryChangeTask(Player player, LotteryBox box, Integer spins) {
-        this.inventory = player.getInventory().getContents();
         this.player = player;
         this.lotteryBox = box;
         this.maxSpin = spins;
@@ -46,11 +45,12 @@ public class InventoryChangeTask extends Task implements Runnable {
                 }
                 player.getInventory().addItem(bonus.getItems());
                 Server.getInstance().broadcastMessage(LotteryBoxMain.lang.getTranslation("Tips", "BonusBroadcast", player.getName(), lotteryBox.getName(), bonus.getNeedTimes(), bonus.getName()));
-            }
+                LotteryBoxMain.log.info("玩家 {" + player.getName() + "} 在抽奖箱 {" + lotteryBox.getName() + "} 中抽奖达到 {" + bonus.getNeedTimes() + "} 次，获得物品 {" + bonus.getName() + "}!");}
             int get = getObtained();
             this.maxIndex.add(maxCounts + get);
             //player.sendMessage((get) + (getPrize(get)==null? "无奖": "有奖"));
         }
+        this.inventory = player.getInventory().getContents();
         player.getInventory().clearAll();
         player.getInventory().setHeldItemIndex(4);
         player.getInventory().setItem(0, getDisplayItem(index - 4, false));
@@ -193,6 +193,7 @@ public class InventoryChangeTask extends Task implements Runnable {
                         if (prize.getBroadcast()) {
                             Server.getInstance().broadcastMessage(LotteryBoxMain.lang.getTranslation("Tips", "PrizeBroadcast", player.getName(), prize.getName()));
                         }
+                        LotteryBoxMain.log.info("玩家 {" + player.getName() + "} 在抽奖箱 {" + lotteryBox.getName() + "} 中抽到物品 {" + prize.getName() + "}!");
                     } else {
                         if (maxSpin == 1) {
                             player.sendMessage(LotteryBoxMain.lang.getTranslation("Tips", "DrawEndWithoutPrize"));
@@ -226,6 +227,7 @@ public class InventoryChangeTask extends Task implements Runnable {
                     if (prize.getBroadcast()) {
                         Server.getInstance().broadcastMessage(LotteryBoxMain.lang.getTranslation("Tips", "PrizeBroadcast", player.getName(), prize.getName()));
                     }
+                    LotteryBoxMain.log.info("玩家 {" + player.getName() + "} 在抽奖箱 {" + lotteryBox.getName() + "} 中抽到物品 {" + prize.getName() + "}!");
                 }
                 saveItem(inventory.values().toArray(new Item[0]));
             }

@@ -15,12 +15,17 @@ import glorydark.lotterybox.commands.MainCommand;
 import glorydark.lotterybox.forms.FormListener;
 import glorydark.lotterybox.languages.Lang;
 import glorydark.lotterybox.listeners.EventListeners;
+import glorydark.lotterybox.logger.LoggerFormatter;
 import glorydark.lotterybox.tools.*;
 import tip.utils.Api;
 import tip.utils.variables.BaseVariable;
 
 import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.logging.FileHandler;
+import java.util.logging.Logger;
 
 public class LotteryBoxMain extends PluginBase {
 
@@ -63,6 +68,8 @@ public class LotteryBoxMain extends PluginBase {
     public static LinkedHashMap<String, Double> ticketPrice = new LinkedHashMap<>();
 
     public static boolean economyAPIEnabled;
+
+    public static Logger log;
 
     public static boolean isWorldAvailable(String level) {
         for (String prefix : banWorldPrefix) {
@@ -124,8 +131,21 @@ public class LotteryBoxMain extends PluginBase {
         new File(path + "/tickets/").mkdirs();
         this.saveResource("languages/zh-cn.yml", false);
         this.saveResource("rarity.yml", false);
+
         path = this.getDataFolder().getPath();
         instance = this;
+        log = Logger.getLogger("LotteryBox_" + UUID.randomUUID());
+        new File(path + "/logs/").mkdirs();
+
+        FileHandler fileHandler;
+        try {
+            fileHandler = new FileHandler(path + "/logs/" + getDate(System.currentTimeMillis()) + ".log");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        fileHandler.setFormatter(new LoggerFormatter());
+        log.addHandler(fileHandler);
+
         Config config = new Config(path + "/config.yml", Config.YAML);
         if (config.getInt("version", 0) != 2022082002) {
             updateConfig();
@@ -173,6 +193,12 @@ public class LotteryBoxMain extends PluginBase {
             VariableManage.addVariableV2("LotteryBox", LotteryBoxRsNPCVariable.class);
         }
         this.getLogger().info("LotteryBox onEnabled!");
+    }
+
+    public static String getDate(long millis) {
+        Date date = new Date(millis);
+        SimpleDateFormat format = new SimpleDateFormat("yyyy年MM月dd日 HH时mm分ss秒");
+        return format.format(date);
     }
 
     public void updateConfig() {

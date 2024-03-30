@@ -33,7 +33,6 @@ public class InventoryChangeTaskV2 extends Task implements Runnable {
     private int ticks;
 
     public InventoryChangeTaskV2(Player player, LotteryBox box, Integer spins) {
-        this.inventory = player.getInventory().getContents();
         this.player = player;
         this.lotteryBox = box;
         this.maxSpin = spins;
@@ -58,8 +57,10 @@ public class InventoryChangeTaskV2 extends Task implements Runnable {
                 }
                 player.getInventory().addItem(bonus.getItems());
                 Server.getInstance().broadcastMessage(LotteryBoxMain.lang.getTranslation("Tips", "BonusBroadcast", player.getName(), lotteryBox.getName(), bonus.getNeedTimes(), bonus.getName()));
+                LotteryBoxMain.log.info("玩家 {" + player.getName() + "} 在抽奖箱 {" + lotteryBox.getName() + "} 中抽奖达到 {" + bonus.getNeedTimes() + "} 次，获得物品 {" + bonus.getName() + "}!");
             }
         }
+        this.inventory = player.getInventory().getContents();
         player.getInventory().clearAll();
         player.getInventory().setItem(0, getDisplayItem(index - 4, false));
         player.getInventory().setItem(1, getDisplayItem(index - 3, false));
@@ -184,6 +185,7 @@ public class InventoryChangeTaskV2 extends Task implements Runnable {
                         if (prize.getBroadcast()) {
                             Server.getInstance().broadcastMessage(LotteryBoxMain.lang.getTranslation("Tips", "PrizeBroadcast", player.getName(), prize.getName()));
                         }
+                        LotteryBoxMain.log.info("玩家 {" + player.getName() + "} 在抽奖箱 {" + lotteryBox.getName() + "} 中抽到物品 {" + prize.getName() + "}!");
                     } else {
                         if (maxSpin == 1) {
                             player.sendMessage(LotteryBoxMain.lang.getTranslation("Tips", "DrawEndWithoutPrize"));
@@ -207,6 +209,7 @@ public class InventoryChangeTaskV2 extends Task implements Runnable {
                     if (player.isOnline() && LotteryBoxMain.playingPlayers.contains(player)) {
                         player.sendMessage(LotteryBoxMain.lang.getTranslation("Tips", "DrawEndWithPrize", prize.getName()));
                         player.getInventory().addItem(prize.getItems());
+                        LotteryBoxMain.log.info("玩家 {" + player.getName() + "} 在抽奖箱 {" + lotteryBox.getName() + "} 中抽到物品 {" + prize.getName() + "}!");
                     } else {
                         saveMessage(LotteryBoxMain.lang.getTranslation("Tips", "DrawEndWithPrize", prize.getName()));
                         saveItem(prize.getItems());
