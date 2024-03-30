@@ -168,7 +168,7 @@ public class InventoryChangeTaskV2 extends Task implements Runnable {
                         count += 1;
                     }
                 }
-                StringBuilder content = new StringBuilder(LotteryBoxMain.lang.getTranslation("RewardWindow", "Title") + "\n" + LotteryBoxMain.lang.getTranslation("RewardWindow", "StartText", count));
+                StringBuilder content = new StringBuilder(LotteryBoxMain.lang.getTranslation("RewardWindow", "StartText", count));
                 for (int index : maxIndex) {
                     Prize prize = getPrizeByIndex(index);
                     lotteryBox.showEndParticle(player);
@@ -192,9 +192,8 @@ public class InventoryChangeTaskV2 extends Task implements Runnable {
                         }
                     }
                 }
-                if (content.toString().equals(LotteryBoxMain.lang.getTranslation("RewardWindow", "Title") + "\n" + LotteryBoxMain.lang.getTranslation("RewardWindow", "StartText"))) {
-                    content.append("\n").append(LotteryBoxMain.lang.getTranslation("RewardWindow", "PrizeNone"));
-                    FormFactory.showRewardWindow(player, content.toString());
+                if (content.toString().equals(LotteryBoxMain.lang.getTranslation("RewardWindow", "StartText", count))) {
+                    FormFactory.showRewardWindow(player, LotteryBoxMain.lang.getTranslation("RewardWindow", "PrizeNone"));
                 } else {
                     FormFactory.showRewardWindow(player, content.toString());
                 }
