@@ -176,7 +176,7 @@ public class InventoryChangeTaskV2 extends Task implements Runnable {
                         CreateFireworkApi.spawnFirework(player.getPosition(), DyeColor.YELLOW, ItemFirework.FireworkExplosion.ExplosionType.BURST);
                     }
                     if (prize != null) {
-                        content.append("\n").append(LotteryBoxMain.lang.getTranslation("RewardWindow", "PrizeText", prize.getRarity(), prize.getName()));
+                        content.append("\n").append(LotteryBoxMain.lang.getTranslation("RewardWindow", "PrizeText", prize.getRarity(), prize.getName(), prize.getPossibility()));
                         player.getInventory().addItem(prize.getItems());
                         player.sendMessage(LotteryBoxMain.lang.getTranslation("Tips", "DrawEndWithPrize", prize.getName()));
                         for (String s : prize.getConsolecommands()) {

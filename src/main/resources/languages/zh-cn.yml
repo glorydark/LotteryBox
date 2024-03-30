@@ -60,7 +60,7 @@ SelectSpinsWindow:
 RewardWindow:
   Title: "获得奖励"
   StartText: "您获得了 %1% 个奖品："
-  PrizeText: "[%1%] %2%"
+  PrizeText: "[%1%] %2% \n 介绍: %3%"
   PrizeNone: "无"
 ShowPossibilityWindow:
   Title: "抽奖箱 [%1%] 介绍"
