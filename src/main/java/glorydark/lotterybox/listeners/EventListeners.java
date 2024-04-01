@@ -19,7 +19,6 @@ import cn.nukkit.utils.Config;
 import glorydark.lotterybox.LotteryBoxMain;
 import glorydark.lotterybox.event.LotteryForceCloseEvent;
 import glorydark.lotterybox.forms.FormFactory;
-import glorydark.lotterybox.forms.FormListener;
 import glorydark.lotterybox.tasks.nonWeight.LotteryBoxChangeTask;
 import glorydark.lotterybox.tools.Inventory;
 import glorydark.lotterybox.tools.LotteryBox;
@@ -40,6 +39,14 @@ public class EventListeners implements Listener {
     }
 
     @EventHandler
+    public void onPlayerInteract(PlayerInteractEvent event) {
+        Player p = event.getPlayer();
+        if (LotteryBoxMain.playingPlayers.contains(p)) {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler
     public void EntityDamageByEntityEvent(EntityDamageByEntityEvent event) {
         if (event.getEntity() instanceof EntityMinecartChest && event.getEntity().namedTag.contains("IsLotteryBox")) {
             event.setCancelled(true);
@@ -54,7 +61,7 @@ public class EventListeners implements Listener {
     }
 
     @EventHandler
-    public void slotChange(InventoryMoveItemEvent event) {
+    public void onSlotChange(InventoryMoveItemEvent event) {
         if (event.getInventory() == null) {
             return;
         }
