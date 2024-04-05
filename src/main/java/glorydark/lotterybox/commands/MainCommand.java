@@ -6,9 +6,9 @@ import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.utils.Config;
 import glorydark.lotterybox.LotteryBoxMain;
+import glorydark.lotterybox.api.LotteryBoxAPI;
 import glorydark.lotterybox.forms.FormFactory;
 import glorydark.lotterybox.languages.Lang;
-import glorydark.lotterybox.api.LotteryBoxAPI;
 import glorydark.lotterybox.tools.Inventory;
 import glorydark.lotterybox.tools.LotteryBox;
 

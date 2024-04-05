@@ -21,6 +21,7 @@ prizes:
     consolecommands: []
     rarity: 平凡
     max_gained_time: 1
+    op_commands: []
   test2:
     displayitem: 2:0:1:null
     possibility: 20

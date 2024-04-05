@@ -2,7 +2,6 @@ package glorydark.lotterybox.tasks.weight;
 
 import cn.nukkit.Player;
 import cn.nukkit.Server;
-import cn.nukkit.block.BlockGlass;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemFirework;
 import cn.nukkit.item.enchantment.protection.EnchantmentProtectionAll;
@@ -10,10 +9,13 @@ import cn.nukkit.scheduler.Task;
 import cn.nukkit.utils.Config;
 import cn.nukkit.utils.DyeColor;
 import glorydark.lotterybox.LotteryBoxMain;
-import glorydark.lotterybox.api.LotteryBoxAPI;
 import glorydark.lotterybox.api.CreateFireworkApi;
+import glorydark.lotterybox.api.LotteryBoxAPI;
 import glorydark.lotterybox.forms.FormFactory;
-import glorydark.lotterybox.tools.*;
+import glorydark.lotterybox.tools.Bonus;
+import glorydark.lotterybox.tools.Inventory;
+import glorydark.lotterybox.tools.LotteryBox;
+import glorydark.lotterybox.tools.Prize;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -43,7 +45,7 @@ public class InventoryChangeTaskV2 extends Task implements Runnable {
         this.originalPrizeList = new ArrayList<>(this.remnantPrizes);
         this.maxCounts = this.remnantPrizes.size();
         for (int i = 0; i < spins; i++) {
-            remnantPrizes.removeIf(prize -> prize.getMaxGainedTime() != -1 &&
+            this.remnantPrizes.removeIf(prize -> prize.getMaxGainedTime() != -1 &&
                     LotteryBoxAPI.getLotteryPrizeTimes(player.getName(), lotteryBox.getName(), prize.getName()) >= prize.getMaxGainedTime());
             ThreadLocalRandom random = ThreadLocalRandom.current();
             int get = getFinalPrize(random.nextInt(1, getMaxWeight()));
@@ -89,7 +91,7 @@ public class InventoryChangeTaskV2 extends Task implements Runnable {
 
     public Integer getFinalPrize(int prizeIndex) {
         int weight = 0;
-        for (Prize prize : this.originalPrizeList) {
+        for (Prize prize : this.remnantPrizes) {
             weight += prize.getPossibility();
             if (weight >= prizeIndex) {
                 return this.originalPrizeList.indexOf(prize);
@@ -104,12 +106,9 @@ public class InventoryChangeTaskV2 extends Task implements Runnable {
 
     public Item getDisplayItem(Integer index, boolean isEnchanted) {
         if (index < 0) {
-            return new BlockGlass().toItem();
+            index += maxCounts * 2;
         }
-        if (index > remnantPrizes.size()) {
-            return new BlockGlass().toItem();
-        }
-        int realIndex = (index + maxCounts * 2) % maxCounts;
+        int realIndex = (index < maxCounts ? index : index % maxCounts);
         Item item = this.originalPrizeList.get(realIndex).getDisplayitem().clone();
         if (isEnchanted) {
             item.addEnchantment(new EnchantmentProtectionAll());
@@ -230,8 +229,14 @@ public class InventoryChangeTaskV2 extends Task implements Runnable {
                         saveMessage(LotteryBoxMain.lang.getTranslation("Tips", "DrawEndWithPrize", prize.getName()));
                         saveItem(prize.getItems());
                     }
-                    for (String s : prize.getConsolecommands()) {
-                        saveCommand(s);
+                    for (String cmd : prize.getConsolecommands()) {
+                        saveConsoleCommand(cmd);
+                    }
+                    for (String cmd : prize.getOpCommands()) {
+                        saveOpCommand(cmd);
+                    }
+                    for (String s : prize.getOpCommands()) {
+                        saveOpCommand(s);
                     }
                     if (prize.getBroadcast()) {
                         Server.getInstance().broadcastMessage(LotteryBoxMain.lang.getTranslation("Tips", "PrizeBroadcast", player.getName(), prize.getName()));
@@ -260,12 +265,20 @@ public class InventoryChangeTaskV2 extends Task implements Runnable {
         config.save();
     }
 
-    private void saveCommand(String command) {
+    private void saveConsoleCommand(String command) {
         Config config = new Config(LotteryBoxMain.path + "/cache.yml", Config.YAML);
 
-        List<String> stringList = new ArrayList<>(config.getStringList(player.getName() + ".commands"));
+        List<String> stringList = new ArrayList<>(config.getStringList(player.getName() + ".console_commands"));
         stringList.add(command);
-        config.set(player.getName() + ".commands", stringList);
+        config.set(player.getName() + ".console_commands", stringList);
+        config.save();
+    }
+
+    private void saveOpCommand(String command) {
+        Config config = new Config(LotteryBoxMain.path + "/cache.yml", Config.YAML);
+        List<String> stringList = new ArrayList<>(config.getStringList(player.getName() + ".op_commands"));
+        stringList.add(command);
+        config.set(player.getName() + ".op_commands", stringList);
         config.save();
     }
 

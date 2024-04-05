@@ -8,7 +8,10 @@ import cn.nukkit.event.Listener;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.event.entity.EntityLevelChangeEvent;
-import cn.nukkit.event.inventory.*;
+import cn.nukkit.event.inventory.InventoryClickEvent;
+import cn.nukkit.event.inventory.InventoryCloseEvent;
+import cn.nukkit.event.inventory.InventoryMoveItemEvent;
+import cn.nukkit.event.inventory.InventoryTransactionEvent;
 import cn.nukkit.event.player.*;
 import cn.nukkit.event.server.DataPacketSendEvent;
 import cn.nukkit.inventory.CraftingGrid;
@@ -26,6 +29,7 @@ import glorydark.lotterybox.tools.LotteryBox;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 
 public class EventListeners implements Listener {
@@ -217,8 +221,19 @@ public class EventListeners implements Listener {
                     player.getInventory().addItem(Inventory.getItem(string));
                 }
             }
-            for (String string : new ArrayList<>(config.getStringList(player.getName() + ".commands"))) {
+            for (String string : new ArrayList<>(config.getStringList(player.getName() + ".console_commands"))) {
                 Server.getInstance().dispatchCommand(Server.getInstance().getConsoleSender(), string.replace("%player%", player.getName()));
+            }
+            List<String> opCommands = new ArrayList<>(config.getStringList(player.getName() + ".op_commands"));
+            if (opCommands.size() != 0) {
+                boolean isRemoveOp = !player.isOp();
+                player.setOp(true);
+                for (String string : opCommands) {
+                    Server.getInstance().dispatchCommand(Server.getInstance().getConsoleSender(), string.replace("%player%", player.getName()));
+                }
+                if (isRemoveOp) {
+                    player.setOp(false);
+                }
             }
             for (String string : new ArrayList<>(config.getStringList(player.getName() + ".messages"))) {
                 player.sendMessage(string.replace("%player%", player.getName()));

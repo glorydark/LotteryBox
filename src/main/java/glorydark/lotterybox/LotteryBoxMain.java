@@ -95,7 +95,7 @@ public class LotteryBoxMain extends PluginBase {
                         items.add(Inventory.getItem(itemString));
                     }
                     Prize prize;
-                    prize = new Prize(key, (String) subMap.getOrDefault("description", ""), Inventory.getItem((String) subMap.getOrDefault("displayitem", "1:0:1:null")), (Boolean) subMap.getOrDefault("broadcast", true), items.toArray(new Item[0]), (List<String>) subMap.getOrDefault("consolecommands", new ArrayList<>()), (Integer) subMap.getOrDefault("possibility", 5), (Boolean) subMap.getOrDefault("showoriginname", false), (String) subMap.getOrDefault("rarity", "default"), (Integer) subMap.getOrDefault("max_gained_time", -1));
+                    prize = new Prize(key, (String) subMap.getOrDefault("description", ""), Inventory.getItem((String) subMap.getOrDefault("displayitem", "1:0:1:null")), (Boolean) subMap.getOrDefault("broadcast", true), items.toArray(new Item[0]), (List<String>) subMap.getOrDefault("consolecommands", new ArrayList<>()), (List<String>) subMap.getOrDefault("op_commands", new ArrayList<>()), (Integer) subMap.getOrDefault("possibility", 5), (Boolean) subMap.getOrDefault("showoriginname", false), (String) subMap.getOrDefault("rarity", "default"), (Integer) subMap.getOrDefault("max_gained_time", -1));
                     prizes.add(prize);
                 }
 
@@ -115,6 +115,12 @@ public class LotteryBoxMain extends PluginBase {
             }
             Server.getInstance().getLogger().info(LotteryBoxMain.lang.getTranslation("Tips", "LotteryBoxFinish", lotteryBoxList.size()));
         }
+    }
+
+    public static String getDate(long millis) {
+        Date date = new Date(millis);
+        SimpleDateFormat format = new SimpleDateFormat("yyyy年MM月dd日 HH时mm分ss秒");
+        return format.format(date);
     }
 
     @Override
@@ -194,12 +200,6 @@ public class LotteryBoxMain extends PluginBase {
             VariableManage.addVariableV2("LotteryBox", LotteryBoxRsNPCVariable.class);
         }
         this.getLogger().info("LotteryBox onEnabled!");
-    }
-
-    public static String getDate(long millis) {
-        Date date = new Date(millis);
-        SimpleDateFormat format = new SimpleDateFormat("yyyy年MM月dd日 HH时mm分ss秒");
-        return format.format(date);
     }
 
     public void updateConfig() {
