@@ -22,7 +22,9 @@ public class Prize {
 
     private String rarity;
 
-    public Prize(String name, String description, Item displayItem, Boolean broadcast, Item[] items, List<String> consolecommands, Integer possibility, Boolean showOriginName, String rarity) {
+    private int maxGainedTime;
+
+    public Prize(String name, String description, Item displayItem, Boolean broadcast, Item[] items, List<String> consolecommands, Integer possibility, Boolean showOriginName, String rarity, int maxGainedTime) {
         this.name = name;
         this.description = description;
         this.displayitem = displayItem;
@@ -32,6 +34,7 @@ public class Prize {
         this.possibility = possibility;
         this.showOriginName = showOriginName;
         this.rarity = rarity;
+        this.maxGainedTime = maxGainedTime;
     }
 
     @Override
@@ -44,6 +47,9 @@ public class Prize {
                 ", items=" + Arrays.toString(items) +
                 ", consolecommands=" + consolecommands +
                 ", possibility=" + possibility +
+                ", showOriginName=" + showOriginName +
+                ", rarity='" + rarity + '\'' +
+                ", maxGainedTime=" + maxGainedTime +
                 '}';
     }
 }

@@ -15,15 +15,12 @@ import glorydark.lotterybox.api.CreateFireworkApi;
 import glorydark.lotterybox.forms.FormFactory;
 import glorydark.lotterybox.tools.*;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 public class InventoryChangeTask extends Task implements Runnable {
 
     private final Map<Integer, Item> inventory;
-    private final List<Integer> maxIndex = new ArrayList<>();
+    private final List<Integer> prizeIndexList = new ArrayList<>();
     private final Player player;
     private final LotteryBox lotteryBox;
     private final int maxSpin;
@@ -47,7 +44,11 @@ public class InventoryChangeTask extends Task implements Runnable {
                 Server.getInstance().broadcastMessage(LotteryBoxMain.lang.getTranslation("Tips", "BonusBroadcast", player.getName(), lotteryBox.getName(), bonus.getNeedTimes(), bonus.getName()));
                 LotteryBoxMain.log.info("玩家 {" + player.getName() + "} 在抽奖箱 {" + lotteryBox.getName() + "} 中抽奖达到 {" + bonus.getNeedTimes() + "} 次，获得物品 {" + bonus.getName() + "}!");}
             int get = getObtained();
-            this.maxIndex.add(maxCounts + get);
+            Prize prize = getPrize(maxCounts + get);
+            if (prize != null) {
+                LotteryBoxAPI.changeLotteryPrizeTimes(player.getName(), lotteryBox.getName(), prize.getName());
+            }
+            this.prizeIndexList.add(maxCounts + get);
             //player.sendMessage((get) + (getPrize(get)==null? "无奖": "有奖"));
         }
         this.inventory = player.getInventory().getContents();
@@ -67,16 +68,20 @@ public class InventoryChangeTask extends Task implements Runnable {
 
     public Integer getObtained() {
         Random random = new Random();
-        for (Prize prize : lotteryBox.getPrizes()) {
-            List<Integer> integers = new ArrayList<>();
+        List<Prize> remnantPrizes = new ArrayList<>(lotteryBox.getPrizes());
+        remnantPrizes.removeIf(prize -> prize.getMaxGainedTime() != -1 &&
+                LotteryBoxAPI.getLotteryPrizeTimes(player.getName(), lotteryBox.getName(), prize.getName()) >= prize.getMaxGainedTime());
+        System.out.println(Arrays.toString(remnantPrizes.toArray()));
+        for (Prize prize : remnantPrizes) {
+            List<Integer> randomCacheList = new ArrayList<>();
             for (int i = 0; i < prize.getPossibility(); i++) {
-                integers.add(Math.abs(random.nextInt()) % 10000);
+                randomCacheList.add(Math.abs(random.nextInt()) % 10000);
             }
-            if (integers.contains(Math.abs(random.nextInt()) % 10000)) {
+            if (randomCacheList.contains(Math.abs(random.nextInt()) % 10000)) {
                 return lotteryBox.getPrizes().indexOf(prize) * 2;
             }
         }
-        return random.nextInt(lotteryBox.getPrizes().size()) * 2 + 1;
+        return -1;
     }
 
     public Prize getPrize(int index) {
@@ -112,7 +117,7 @@ public class InventoryChangeTask extends Task implements Runnable {
     @Override
     public void onRun(int i) {
         if (player.isOnline() && !LotteryBoxMain.banWorlds.contains(player.getLevel().getName()) && LotteryBoxMain.isWorldAvailable(player.getLevel().getName()) && LotteryBoxMain.playingPlayers.contains(player)) {
-            Integer thisMaxIndex = maxIndex.get(0);
+            Integer thisMaxIndex = prizeIndexList.get(0);
             ticks += 1;
             if (maxCounts > 10) {
                 if (index < 4) {
@@ -126,7 +131,7 @@ public class InventoryChangeTask extends Task implements Runnable {
                     }
                 }
             }
-            if (index <= thisMaxIndex) {
+            if ((thisMaxIndex != -1 && index <= thisMaxIndex) || (thisMaxIndex == -1 && index <= (lotteryBox.getPrizes().size() - 1) * 2)) {
                 player.getInventory().clearAll();
                 player.getInventory().setItem(0, getDisplayItem(index - 4, false));
                 player.getInventory().setItem(1, getDisplayItem(index - 3, false));
@@ -171,13 +176,19 @@ public class InventoryChangeTask extends Task implements Runnable {
                 player.getInventory().clearAll();
                 player.getInventory().setContents(inventory);
                 int count = 0;
-                for (int index : maxIndex) {
+                for (int index : prizeIndexList) {
+                    if (index == -1) {
+                        continue;
+                    }
                     if (getPrize(index) != null) {
                         count += 1;
                     }
                 }
                 StringBuilder content = new StringBuilder(LotteryBoxMain.lang.getTranslation("RewardWindow", "StartText", count));
-                for (int index : maxIndex) {
+                for (int index : prizeIndexList) {
+                    if (index == -1) {
+                        continue;
+                    }
                     Prize prize = getPrize(index);
                     lotteryBox.showEndParticle(player);
                     if (lotteryBox.getSpawnFirework()) {
@@ -210,7 +221,10 @@ public class InventoryChangeTask extends Task implements Runnable {
                 this.cancel();
             }
         } else {
-            for (Integer index : maxIndex) {
+            for (Integer index : prizeIndexList) {
+                if (index == -1) {
+                    continue;
+                }
                 Prize prize = getPrize(index);
                 if (prize != null) {
                     if (player.isOnline() && LotteryBoxMain.playingPlayers.contains(player)) {

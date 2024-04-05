@@ -1,6 +1,6 @@
 name: LotteryBox
 main: glorydark.lotterybox.LotteryBoxMain
-version: "1.1.3"
+version: "1.1.4"
 author: glorydark
 api: ["1.0.0"]
 description: LotteryBox
@@ -8,3 +8,4 @@ load: POSTWORLD
 softdepend:
   - Tips
   - EconomyAPI
+  - RsNPC

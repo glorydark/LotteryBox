@@ -95,7 +95,7 @@ public class LotteryBoxMain extends PluginBase {
                         items.add(Inventory.getItem(itemString));
                     }
                     Prize prize;
-                    prize = new Prize(key, (String) subMap.getOrDefault("description", ""), Inventory.getItem((String) subMap.getOrDefault("displayitem", "1:0:1:null")), (Boolean) subMap.getOrDefault("broadcast", true), items.toArray(new Item[0]), (List<String>) subMap.getOrDefault("consolecommands", new ArrayList<>()), (Integer) subMap.getOrDefault("possibility", 5), (Boolean) subMap.getOrDefault("showoriginname", false), (String) subMap.getOrDefault("rarity", "default"));
+                    prize = new Prize(key, (String) subMap.getOrDefault("description", ""), Inventory.getItem((String) subMap.getOrDefault("displayitem", "1:0:1:null")), (Boolean) subMap.getOrDefault("broadcast", true), items.toArray(new Item[0]), (List<String>) subMap.getOrDefault("consolecommands", new ArrayList<>()), (Integer) subMap.getOrDefault("possibility", 5), (Boolean) subMap.getOrDefault("showoriginname", false), (String) subMap.getOrDefault("rarity", "default"), (Integer) subMap.getOrDefault("max_gained_time", -1));
                     prizes.add(prize);
                 }
 
@@ -126,7 +126,8 @@ public class LotteryBoxMain extends PluginBase {
     public void onEnable() {
         saveDefaultConfig();
         new File(path + "/languages/").mkdirs();
-        new File(path + "/players/").mkdirs();
+        new File(path + "/lottery_records/").mkdirs();
+        new File(path + "/prize_records/").mkdirs();
         new File(path + "/boxes/").mkdirs();
         new File(path + "/tickets/").mkdirs();
         this.saveResource("languages/zh-cn.yml", false);
