@@ -7,6 +7,7 @@ import cn.nukkit.item.ItemFirework;
 import cn.nukkit.item.enchantment.protection.EnchantmentProtectionAll;
 import cn.nukkit.scheduler.Task;
 import cn.nukkit.utils.Config;
+import cn.nukkit.utils.ConfigSection;
 import cn.nukkit.utils.DyeColor;
 import glorydark.lotterybox.LotteryBoxMain;
 import glorydark.lotterybox.api.CreateFireworkApi;
@@ -247,13 +248,14 @@ public class InventoryChangeTaskV2 extends Task implements Runnable {
             });
         }
         Config config = new Config(LotteryBoxMain.path + "/cache.yml", Config.YAML);
-        config.set("inventory_cache", stringList);
+        ConfigSection section = config.getSection(player.getName());
+        section.set("inventory_cache", stringList);
+        config.set(player.getName(), section);
         config.save();
     }
 
     private void saveItem(Item[] items) {
         Config config = new Config(LotteryBoxMain.path + "/cache.yml", Config.YAML);
-
         List<String> stringList = new ArrayList<>(config.getStringList(player.getName() + ".items"));
         for (Item item : items) {
             if (item.getId() == 0 || item.getId() == 255) {
@@ -261,7 +263,9 @@ public class InventoryChangeTaskV2 extends Task implements Runnable {
             }
             stringList.add(Inventory.saveItemToString(item));
         }
-        config.set(player.getName() + ".items", stringList);
+        ConfigSection section = config.getSection(player.getName());
+        section.set("items", stringList);
+        config.set(player.getName(), section);
         config.save();
     }
 
@@ -270,7 +274,9 @@ public class InventoryChangeTaskV2 extends Task implements Runnable {
 
         List<String> stringList = new ArrayList<>(config.getStringList(player.getName() + ".console_commands"));
         stringList.add(command);
-        config.set(player.getName() + ".console_commands", stringList);
+        ConfigSection section = config.getSection(player.getName());
+        section.set("console_commands", stringList);
+        config.set(player.getName(), section);
         config.save();
     }
 
@@ -278,7 +284,9 @@ public class InventoryChangeTaskV2 extends Task implements Runnable {
         Config config = new Config(LotteryBoxMain.path + "/cache.yml", Config.YAML);
         List<String> stringList = new ArrayList<>(config.getStringList(player.getName() + ".op_commands"));
         stringList.add(command);
-        config.set(player.getName() + ".op_commands", stringList);
+        ConfigSection section = config.getSection(player.getName());
+        section.set("op_commands", stringList);
+        config.set(player.getName(), section);
         config.save();
     }
 
@@ -286,7 +294,9 @@ public class InventoryChangeTaskV2 extends Task implements Runnable {
         Config config = new Config(LotteryBoxMain.path + "/cache.yml", Config.YAML);
         List<String> stringList = new ArrayList<>(config.getStringList(player.getName() + ".messages"));
         stringList.add(message);
-        config.set(player.getName() + ".messages", stringList);
+        ConfigSection section = config.getSection(player.getName());
+        section.set("messages", stringList);
+        config.set(player.getName(), section);
         config.save();
     }
 }
