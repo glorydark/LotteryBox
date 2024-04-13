@@ -195,12 +195,9 @@ public class InventoryChangeTaskV2 extends Task implements Runnable {
                         content.append("\n").append(LotteryBoxMain.lang.getTranslation("RewardWindow", "PrizeText", prize.getRarity(), prize.getName(), prize.getDescription()));
                         player.getInventory().addItem(prize.getItems());
                         player.sendMessage(LotteryBoxMain.lang.getTranslation("Tips", "DrawEndWithPrize", prize.getName()));
-                        for (String s : prize.getConsolecommands()) {
-                            Server.getInstance().dispatchCommand(Server.getInstance().getConsoleSender(), s.replace("%player%", player.getName()));
-                        }
-                        if (prize.getBroadcast()) {
-                            Server.getInstance().broadcastMessage(LotteryBoxMain.lang.getTranslation("Tips", "PrizeBroadcast", player.getName(), prize.getName()));
-                        }
+                        prize.executeOpCommands(player);
+                        prize.executeConsoleCommands(player);
+                        prize.checkBroadcast(player);
                         LotteryBoxMain.log.info("玩家 {" + player.getName() + "} 在抽奖箱 {" + lotteryBox.getName() + "} 中抽到物品 {" + prize.getName() + "}!");
                     } else {
                         if (maxSpin == 1) {
@@ -218,31 +215,21 @@ public class InventoryChangeTaskV2 extends Task implements Runnable {
                 this.cancel();
             }
         } else {
+            player.getInventory().clearAll();
+            player.getInventory().setContents(inventory);
             for (Integer index : prizeIndexList) {
                 Prize prize = getPrizeByIndex(index);
                 if (prize != null) {
-                    if (player.isOnline() && LotteryBoxMain.playingPlayers.contains(player)) {
-                        player.sendMessage(LotteryBoxMain.lang.getTranslation("Tips", "DrawEndWithPrize", prize.getName()));
-                        player.getInventory().addItem(prize.getItems());
-                        LotteryBoxMain.log.info("玩家 {" + player.getName() + "} 在抽奖箱 {" + lotteryBox.getName() + "} 中抽到物品 {" + prize.getName() + "}!");
-                    } else {
-                        saveMessage(LotteryBoxMain.lang.getTranslation("Tips", "DrawEndWithPrize", prize.getName()));
-                        saveItem(prize.getItems());
-                    }
+                    saveMessage(LotteryBoxMain.lang.getTranslation("Tips", "DrawEndWithPrize", prize.getName()));
+                    saveItem(prize.getItems());
                     for (String cmd : prize.getConsolecommands()) {
                         saveConsoleCommand(cmd);
                     }
                     for (String cmd : prize.getOpCommands()) {
                         saveOpCommand(cmd);
                     }
-                    for (String s : prize.getOpCommands()) {
-                        saveOpCommand(s);
-                    }
-                    if (prize.getBroadcast()) {
-                        Server.getInstance().broadcastMessage(LotteryBoxMain.lang.getTranslation("Tips", "PrizeBroadcast", player.getName(), prize.getName()));
-                    }
+                    prize.checkBroadcast(player);
                 }
-                saveItem(inventory.values().toArray(new Item[0]));
             }
             LotteryBoxMain.playerLotteryBoxes.remove(player);
             LotteryBoxMain.playingPlayers.remove(player);
@@ -259,6 +246,9 @@ public class InventoryChangeTaskV2 extends Task implements Runnable {
 
         List<String> stringList = new ArrayList<>(config.getStringList(player.getName() + ".items"));
         for (Item item : items) {
+            if (item.getId() == 0 || item.getId() == 255) {
+                continue;
+            }
             stringList.add(Inventory.saveItemToString(item));
         }
         config.set(player.getName() + ".items", stringList);

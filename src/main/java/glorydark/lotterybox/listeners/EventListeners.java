@@ -249,8 +249,8 @@ public class EventListeners implements Listener {
     public void onQuit(PlayerQuitEvent event) {
         Player player = event.getPlayer();
         if (LotteryBoxMain.playingPlayers.contains(player)) {
-            LotteryBoxMain.playingPlayers.remove(player);
             event.getPlayer().getInventory().clearAll();
+            LotteryBoxMain.playingPlayers.remove(player);
         }
         FormFactory.exchangeCaches.remove(player);
     }

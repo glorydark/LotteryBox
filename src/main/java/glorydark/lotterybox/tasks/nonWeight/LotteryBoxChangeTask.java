@@ -195,22 +195,19 @@ public class LotteryBoxChangeTask extends Task implements Runnable {
                 Integer realIndex = allowIndex.get(thisMaxIndex % 22);
                 if (realIndex < prizes.size()) {
                     Prize prize = prizes.get(realIndex);
-                    if (player.isOnline()) {
-                        player.sendMessage(LotteryBoxMain.lang.getTranslation("Tips", "DrawEndWithPrize").replace("%s", prize.getName()));
-                        player.getInventory().addItem(prize.getItems());
-                    } else {
-                        saveItem(prize.getItems());
-                        saveMessage(LotteryBoxMain.lang.getTranslation("Tips", "DrawEndWithPrize").replace("%s", prize.getName()));
+                    saveItem(prize.getItems());
+                    saveMessage(LotteryBoxMain.lang.getTranslation("Tips", "DrawEndWithPrize").replace("%s", prize.getName()));
+                    for (String cmd : prize.getOpCommands()) {
+                        saveOpCommand(cmd);
                     }
-                    prize.executeOpCommands(player);
-                    prize.executeConsoleCommands(player);
+                    for (String cmd : prize.getConsolecommands()) {
+                        saveConsoleCommand(cmd);
+                    }
                     prize.checkBroadcast(player);
                     LotteryBoxMain.log.info("玩家 {" + player.getName() + "} 在抽奖箱 {" + lotteryBox.getName() + "} 中抽到物品 {" + prize.getName() + "}!");
                 } else {
-                    Item[] give = new Item[]{new BlockAir().toItem()};
                     if (player.isOnline()) {
-                        player.sendMessage(LotteryBoxMain.lang.getTranslation("Tips", "DrawEndWithoutPrize"));
-                        player.getInventory().addItem(give);
+                        saveMessage(LotteryBoxMain.lang.getTranslation("Tips", "DrawEndWithoutPrize"));
                     }
                 }
             }
@@ -231,6 +228,9 @@ public class LotteryBoxChangeTask extends Task implements Runnable {
 
         List<String> stringList = new ArrayList<>(config.getStringList(player.getName() + ".items"));
         for (Item item : items) {
+            if (item.getId() == 0 || item.getId() == 255) {
+                continue;
+            }
             stringList.add(Inventory.saveItemToString(item));
         }
         config.set(player.getName() + ".items", stringList);

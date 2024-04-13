@@ -237,16 +237,14 @@ public class InventoryChangeTask extends Task implements Runnable {
                     for (String cmd : prize.getOpCommands()) {
                         saveOpCommand(cmd);
                     }
-                    for (String s : prize.getOpCommands()) {
-                        saveOpCommand(s);
-                    }
                     if (prize.getBroadcast()) {
                         Server.getInstance().broadcastMessage(LotteryBoxMain.lang.getTranslation("Tips", "PrizeBroadcast", player.getName(), prize.getName()));
                     }
                     LotteryBoxMain.log.info("玩家 {" + player.getName() + "} 在抽奖箱 {" + lotteryBox.getName() + "} 中抽到物品 {" + prize.getName() + "}!");
                 }
-                saveItem(inventory.values().toArray(new Item[0]));
             }
+            player.getInventory().clearAll();
+            player.getInventory().setContents(inventory);
             LotteryBoxMain.playerLotteryBoxes.remove(player);
             LotteryBoxMain.playingPlayers.remove(player);
             LotteryBoxMain.instance.getLogger().warning("Detect [" + player.getName() + "] exit the server, server will retry to give it in his or her next join");
@@ -262,6 +260,9 @@ public class InventoryChangeTask extends Task implements Runnable {
 
         List<String> stringList = new ArrayList<>(config.getStringList(player.getName() + ".items"));
         for (Item item : items) {
+            if (item.getId() == 0 || item.getId() == 255) {
+                continue;
+            }
             stringList.add(Inventory.saveItemToString(item));
         }
         config.set(player.getName() + ".items", stringList);
