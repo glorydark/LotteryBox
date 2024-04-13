@@ -219,7 +219,7 @@ public class EventListeners implements Listener {
         if (config.exists(player.getName())) {
             if (LotteryBoxMain.save_bag_enabled) {
                 player.getInventory().clearAll();
-                for (Map<String, Object> string : new ArrayList<Map<String, Object>>(config.get(player.getName() + ".inventory", new ArrayList<>()))) {
+                for (Map<String, Object> string : new ArrayList<Map<String, Object>>(config.get(player.getName() + ".inventory_cache", new ArrayList<>()))) {
                     player.getInventory().setItem((Integer) string.getOrDefault("slot", 0), Inventory.getItem((String) string.getOrDefault("item", "")));
                 }
             }
