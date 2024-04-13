@@ -17,10 +17,7 @@ import glorydark.lotterybox.tools.Inventory;
 import glorydark.lotterybox.tools.LotteryBox;
 import glorydark.lotterybox.tools.Prize;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 public class InventoryChangeTask extends Task implements Runnable {
 
@@ -218,19 +215,17 @@ public class InventoryChangeTask extends Task implements Runnable {
                 this.cancel();
             }
         } else {
+            if (LotteryBoxMain.save_bag_enabled) {
+                saveBag();
+            }
             for (Integer index : prizeIndexList) {
                 if (index == -1) {
                     continue;
                 }
                 Prize prize = getPrize(index);
                 if (prize != null) {
-                    if (player.isOnline() && LotteryBoxMain.playingPlayers.contains(player)) {
-                        player.sendMessage(LotteryBoxMain.lang.getTranslation("Tips", "DrawEndWithPrize", prize.getName()));
-                        player.getInventory().addItem(prize.getItems());
-                    } else {
-                        saveMessage(LotteryBoxMain.lang.getTranslation("Tips", "DrawEndWithPrize", prize.getName()));
-                        saveItem(prize.getItems());
-                    }
+                    saveMessage(LotteryBoxMain.lang.getTranslation("Tips", "DrawEndWithPrize", prize.getName()));
+                    saveItem(prize.getItems());
                     for (String cmd : prize.getConsolecommands()) {
                         saveConsoleCommand(cmd);
                     }
@@ -243,8 +238,6 @@ public class InventoryChangeTask extends Task implements Runnable {
                     LotteryBoxMain.log.info("玩家 {" + player.getName() + "} 在抽奖箱 {" + lotteryBox.getName() + "} 中抽到物品 {" + prize.getName() + "}!");
                 }
             }
-            player.getInventory().clearAll();
-            player.getInventory().setContents(inventory);
             LotteryBoxMain.playerLotteryBoxes.remove(player);
             LotteryBoxMain.playingPlayers.remove(player);
             LotteryBoxMain.instance.getLogger().warning("Detect [" + player.getName() + "] exit the server, server will retry to give it in his or her next join");
@@ -252,12 +245,23 @@ public class InventoryChangeTask extends Task implements Runnable {
         }
     }
 
-    private void saveItem(Item[] items) {
-        if (!LotteryBoxMain.save_bag_enabled) {
-            return;
+    private void saveBag() {
+        List<Map<String, Object>> stringList = new ArrayList<>();
+        for (Map.Entry<Integer, Item> entry : inventory.entrySet()) {
+            stringList.add(new LinkedHashMap<String, Object>() {
+                {
+                    this.put("slot", entry.getKey());
+                    this.put("item", Inventory.saveItemToString(entry.getValue()));
+                }
+            });
         }
         Config config = new Config(LotteryBoxMain.path + "/cache.yml", Config.YAML);
+        config.set("inventory_cache", stringList);
+        config.save();
+    }
 
+    private void saveItem(Item[] items) {
+        Config config = new Config(LotteryBoxMain.path + "/cache.yml", Config.YAML);
         List<String> stringList = new ArrayList<>(config.getStringList(player.getName() + ".items"));
         for (Item item : items) {
             if (item.getId() == 0 || item.getId() == 255) {

@@ -17,10 +17,7 @@ import glorydark.lotterybox.tools.Inventory;
 import glorydark.lotterybox.tools.LotteryBox;
 import glorydark.lotterybox.tools.Prize;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class InventoryChangeTaskV2 extends Task implements Runnable {
@@ -215,8 +212,9 @@ public class InventoryChangeTaskV2 extends Task implements Runnable {
                 this.cancel();
             }
         } else {
-            player.getInventory().clearAll();
-            player.getInventory().setContents(inventory);
+            if (LotteryBoxMain.save_bag_enabled) {
+                saveBag();
+            }
             for (Integer index : prizeIndexList) {
                 Prize prize = getPrizeByIndex(index);
                 if (prize != null) {
@@ -238,10 +236,22 @@ public class InventoryChangeTaskV2 extends Task implements Runnable {
         }
     }
 
-    private void saveItem(Item[] items) {
-        if (!LotteryBoxMain.save_bag_enabled) {
-            return;
+    private void saveBag() {
+        List<Map<String, Object>> stringList = new ArrayList<>();
+        for (Map.Entry<Integer, Item> entry : inventory.entrySet()) {
+            stringList.add(new LinkedHashMap<String, Object>() {
+                {
+                    this.put("slot", entry.getKey());
+                    this.put("item", Inventory.saveItemToString(entry.getValue()));
+                }
+            });
         }
+        Config config = new Config(LotteryBoxMain.path + "/cache.yml", Config.YAML);
+        config.set("inventory_cache", stringList);
+        config.save();
+    }
+
+    private void saveItem(Item[] items) {
         Config config = new Config(LotteryBoxMain.path + "/cache.yml", Config.YAML);
 
         List<String> stringList = new ArrayList<>(config.getStringList(player.getName() + ".items"));

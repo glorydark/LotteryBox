@@ -30,6 +30,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 public class EventListeners implements Listener {
@@ -217,9 +218,13 @@ public class EventListeners implements Listener {
         Config config = new Config(LotteryBoxMain.path + "/cache.yml", Config.YAML);
         if (config.exists(player.getName())) {
             if (LotteryBoxMain.save_bag_enabled) {
-                for (String string : new ArrayList<>(config.getStringList(player.getName() + ".items"))) {
-                    player.getInventory().addItem(Inventory.getItem(string));
+                player.getInventory().clearAll();
+                for (Map<String, Object> string : new ArrayList<Map<String, Object>>(config.get(player.getName() + ".inventory", new ArrayList<>()))) {
+                    player.getInventory().setItem((Integer) string.getOrDefault("slot", 0), Inventory.getItem((String) string.getOrDefault("item", "")));
                 }
+            }
+            for (String string : new ArrayList<>(config.getStringList(player.getName() + ".items"))) {
+                player.getInventory().addItem(Inventory.getItem(string));
             }
             for (String string : new ArrayList<>(config.getStringList(player.getName() + ".console_commands"))) {
                 Server.getInstance().dispatchCommand(Server.getInstance().getConsoleSender(), string.replace("%player%", player.getName()));

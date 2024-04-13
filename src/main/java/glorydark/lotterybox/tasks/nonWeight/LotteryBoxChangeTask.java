@@ -221,9 +221,6 @@ public class LotteryBoxChangeTask extends Task implements Runnable {
     }
 
     private void saveItem(Item[] items) {
-        if (!LotteryBoxMain.save_bag_enabled) {
-            return;
-        }
         Config config = new Config(LotteryBoxMain.path + "/cache.yml", Config.YAML);
 
         List<String> stringList = new ArrayList<>(config.getStringList(player.getName() + ".items"));
