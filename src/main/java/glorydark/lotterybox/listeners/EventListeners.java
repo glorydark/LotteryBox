@@ -8,13 +8,11 @@ import cn.nukkit.event.Listener;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.event.entity.EntityLevelChangeEvent;
-import cn.nukkit.event.inventory.InventoryClickEvent;
-import cn.nukkit.event.inventory.InventoryCloseEvent;
-import cn.nukkit.event.inventory.InventoryMoveItemEvent;
-import cn.nukkit.event.inventory.InventoryTransactionEvent;
+import cn.nukkit.event.inventory.*;
 import cn.nukkit.event.player.*;
 import cn.nukkit.event.server.DataPacketSendEvent;
 import cn.nukkit.inventory.CraftingGrid;
+import cn.nukkit.inventory.InventoryHolder;
 import cn.nukkit.inventory.PlayerOffhandInventory;
 import cn.nukkit.inventory.PlayerUIInventory;
 import cn.nukkit.network.protocol.SetEntityMotionPacket;
@@ -55,6 +53,13 @@ public class EventListeners implements Listener {
     public void EntityDamageByEntityEvent(EntityDamageByEntityEvent event) {
         if (event.getEntity() instanceof EntityMinecartChest && event.getEntity().namedTag.contains("IsLotteryBox")) {
             event.setCancelled(true);
+            return;
+        }
+        if (event.getDamager() instanceof Player) {
+            Player player = (Player) event.getDamager();
+            if (LotteryBoxMain.playingPlayers.contains(player)) {
+                event.setCancelled(true);
+            }
         }
     }
 
@@ -155,6 +160,20 @@ public class EventListeners implements Listener {
             chest.getInventory().clearAll();
             chest.close();
             LotteryBoxMain.chestList.remove(event.getPlayer());
+        }
+    }
+
+    @EventHandler
+    public void InventoryPickupItemEvent(InventoryPickupItemEvent event) {
+        InventoryHolder holder = event.getInventory().getHolder();
+        if (holder instanceof Player) {
+            Player player = (Player) holder;
+            if (LotteryBoxMain.chestList.containsKey(player)) {
+                EntityMinecartChest chest = LotteryBoxMain.chestList.get(player);
+                chest.getInventory().clearAll();
+                chest.close();
+                LotteryBoxMain.chestList.remove(player);
+            }
         }
     }
 
