@@ -116,8 +116,10 @@ public class EventListeners implements Listener {
         for (Player player : players) {
             if (LotteryBoxMain.chestList.containsKey(player)) {
                 event.setCancelled(true);
+                break;
             } else if (LotteryBoxMain.playingPlayers.contains(player)) {
                 event.setCancelled(true);
+                break;
             }
         }
     }
