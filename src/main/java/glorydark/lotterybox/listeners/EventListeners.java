@@ -11,10 +11,7 @@ import cn.nukkit.event.entity.EntityLevelChangeEvent;
 import cn.nukkit.event.inventory.*;
 import cn.nukkit.event.player.*;
 import cn.nukkit.event.server.DataPacketSendEvent;
-import cn.nukkit.inventory.CraftingGrid;
 import cn.nukkit.inventory.InventoryHolder;
-import cn.nukkit.inventory.PlayerOffhandInventory;
-import cn.nukkit.inventory.PlayerUIInventory;
 import cn.nukkit.network.protocol.SetEntityMotionPacket;
 import cn.nukkit.utils.Config;
 import glorydark.lotterybox.LotteryBoxMain;
@@ -32,14 +29,6 @@ import java.util.Map;
 
 
 public class EventListeners implements Listener {
-    public static void resetBasisWindow(Player player) {
-        PlayerUIInventory inventory = player.getUIInventory();
-        player.addWindow(inventory);
-        CraftingGrid grid = player.getCraftingGrid();
-        player.addWindow(grid);
-        PlayerOffhandInventory inventory1 = player.getOffhandInventory();
-        player.addWindow(inventory1);
-    }
 
     @EventHandler
     public void onPlayerInteract(PlayerInteractEvent event) {
@@ -127,6 +116,8 @@ public class EventListeners implements Listener {
         for (Player player : players) {
             if (LotteryBoxMain.chestList.containsKey(player)) {
                 event.setCancelled(true);
+            } else if (LotteryBoxMain.playingPlayers.contains(player)) {
+                event.setCancelled(true);
             }
         }
     }
@@ -166,8 +157,7 @@ public class EventListeners implements Listener {
     @EventHandler
     public void InventoryPickupItemEvent(InventoryPickupItemEvent event) {
         InventoryHolder holder = event.getInventory().getHolder();
-        if (holder instanceof Player) {
-            Player player = (Player) holder;
+        for (Player player : holder.getInventory().getViewers()) {
             if (LotteryBoxMain.chestList.containsKey(player)) {
                 EntityMinecartChest chest = LotteryBoxMain.chestList.get(player);
                 chest.getInventory().clearAll();
