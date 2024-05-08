@@ -120,6 +120,11 @@ public class InventoryChangeTaskV2 extends Task implements Runnable {
     @Override
     public void onRun(int i) {
         if (player.isOnline() && !LotteryBoxMain.banWorlds.contains(player.getLevel().getName()) && LotteryBoxMain.isWorldAvailable(player.getLevel().getName()) && LotteryBoxMain.playingPlayers.contains(player)) {
+            if (prizeIndexList.size() == 0) {
+                FormFactory.showRewardWindow(player, LotteryBoxMain.lang.getTranslation("RewardWindow", "PrizeNone"));
+                this.cancel();
+                return;
+            }
             Integer thisMaxIndex = prizeIndexList.get(0);
             ticks += 1;
             if (thisMaxIndex > 10) {
