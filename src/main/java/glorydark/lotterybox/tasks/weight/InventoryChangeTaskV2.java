@@ -122,6 +122,8 @@ public class InventoryChangeTaskV2 extends Task implements Runnable {
         if (player.isOnline() && !LotteryBoxMain.banWorlds.contains(player.getLevel().getName()) && LotteryBoxMain.isWorldAvailable(player.getLevel().getName()) && LotteryBoxMain.playingPlayers.contains(player)) {
             if (prizeIndexList.size() == 0) {
                 FormFactory.showRewardWindow(player, LotteryBoxMain.lang.getTranslation("RewardWindow", "PrizeNone"));
+                LotteryBoxMain.playingPlayers.remove(player);
+                LotteryBoxMain.playerLotteryBoxes.remove(player);
                 this.cancel();
                 return;
             }
