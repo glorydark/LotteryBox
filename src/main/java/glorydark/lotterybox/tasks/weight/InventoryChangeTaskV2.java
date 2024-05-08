@@ -46,21 +46,24 @@ public class InventoryChangeTaskV2 extends Task implements Runnable {
             this.remnantPrizes.removeIf(prize -> prize.getMaxGainedTime() != -1 &&
                     LotteryBoxAPI.getLotteryPrizeTimes(player.getName(), lotteryBox.getName(), prize.getName()) >= prize.getMaxGainedTime());
             ThreadLocalRandom random = ThreadLocalRandom.current();
-            int get = getFinalPrize(random.nextInt(1, getMaxWeight()));
-            Prize prize = getPrizeByIndex(get);
-            LotteryBoxAPI.changeLotteryPrizeTimes(player.getName(), lotteryBox.getName(), prize.getName());
-            this.prizeIndexList.add(maxCounts * 2 + get);
-            //player.sendMessage((get) + (getPrize(get)==null? "无奖": "有奖"));
-            LotteryBoxAPI.changeLotteryPlayTimes(player.getName(), lotteryBox.getName(), 1);
-            int times = LotteryBoxAPI.getLotteryPlayTimes(player.getName(), lotteryBox.getName());
-            if (lotteryBox.getBonus(times) != null) {
-                Bonus bonus = lotteryBox.getBonus(times);
-                for (String s : bonus.getConsolecommands()) {
-                    Server.getInstance().dispatchCommand(Server.getInstance().getConsoleSender(), s.replace("%player%", player.getName()));
+            int maxWeight = getMaxWeight();
+            if (maxWeight > 0) {
+                int get = getFinalPrize(random.nextInt(0, maxWeight));
+                Prize prize = getPrizeByIndex(get);
+                LotteryBoxAPI.changeLotteryPrizeTimes(player.getName(), lotteryBox.getName(), prize.getName());
+                this.prizeIndexList.add(maxCounts * 2 + get);
+                //player.sendMessage((get) + (getPrize(get)==null? "无奖": "有奖"));
+                LotteryBoxAPI.changeLotteryPlayTimes(player.getName(), lotteryBox.getName(), 1);
+                int times = LotteryBoxAPI.getLotteryPlayTimes(player.getName(), lotteryBox.getName());
+                if (lotteryBox.getBonus(times) != null) {
+                    Bonus bonus = lotteryBox.getBonus(times);
+                    for (String s : bonus.getConsolecommands()) {
+                        Server.getInstance().dispatchCommand(Server.getInstance().getConsoleSender(), s.replace("%player%", player.getName()));
+                    }
+                    player.getInventory().addItem(bonus.getItems());
+                    Server.getInstance().broadcastMessage(LotteryBoxMain.lang.getTranslation("Tips", "BonusBroadcast", player.getName(), lotteryBox.getName(), bonus.getNeedTimes(), bonus.getName()));
+                    LotteryBoxMain.log.info("玩家 {" + player.getName() + "} 在抽奖箱 {" + lotteryBox.getName() + "} 中抽奖达到 {" + bonus.getNeedTimes() + "} 次，获得物品 {" + bonus.getName() + "}!");
                 }
-                player.getInventory().addItem(bonus.getItems());
-                Server.getInstance().broadcastMessage(LotteryBoxMain.lang.getTranslation("Tips", "BonusBroadcast", player.getName(), lotteryBox.getName(), bonus.getNeedTimes(), bonus.getName()));
-                LotteryBoxMain.log.info("玩家 {" + player.getName() + "} 在抽奖箱 {" + lotteryBox.getName() + "} 中抽奖达到 {" + bonus.getNeedTimes() + "} 次，获得物品 {" + bonus.getName() + "}!");
             }
         }
         this.inventory = player.getInventory().getContents();
