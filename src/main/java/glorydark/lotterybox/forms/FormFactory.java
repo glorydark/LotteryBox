@@ -54,10 +54,10 @@ public class FormFactory {
         showFormWindow(player, windowSimple, SelectLotteryBox);
     }
 
-    public static void showPESelectSpinWindow(Player player) {
+    public static void showPESelectSpinWindow(Player player, LotteryBox lotteryBox) {
         FormWindowCustom custom = new FormWindowCustom(LotteryBoxMain.lang.getTranslation("SelectSpinsWindow", "Title", LotteryBoxMain.playerLotteryBoxes.get(player).getName()));
         custom.addElement(new ElementLabel(LotteryBoxMain.lang.getTranslation("SelectSpinsWindow", "Content")));
-        custom.addElement(new ElementSlider(LotteryBoxMain.lang.getTranslation("SelectSpinsWindow", "Slider_Text"), 1, 30, 1, 1));
+        custom.addElement(new ElementSlider(LotteryBoxMain.lang.getTranslation("SelectSpinsWindow", "Slider_Text"), 1, lotteryBox.getMaxDrawPerTime() == 0? 30: lotteryBox.getMaxDrawPerTime(), 1, 1));
         showFormWindow(player, custom, SelectLotterySpin);
     }
 

@@ -109,10 +109,11 @@ public class LotteryBoxMain extends PluginBase {
                     }
                     bonuses.add(new Bonus(key, items.toArray(new Item[0]), (List<String>) subMap.get("consolecommands"), (Integer) subMap.get("times")));
                 }
-                LotteryBox lotteryBox = new LotteryBox(file.getName().split("\\.")[0], config.getString("displayName"), config.getStringList("needs"), config.getStringList("descriptions"), prizes, bonuses, config.getInt("permanentLimit"), config.getBoolean("spawnFirework"), config.getString("endParticle"), config.getString("sound", Sound.RANDOM_ORB.getSound()), config.getBoolean("weightEnabled", false));
+                LotteryBox lotteryBox = new LotteryBox(file.getName().split("\\.")[0], config.getInt(""), config.getString("displayName"), config.getStringList("needs"), config.getStringList("descriptions"), prizes, bonuses, config.getInt("permanentLimit"), config.getBoolean("spawnFirework"), config.getString("endParticle"), config.getString("sound", Sound.RANDOM_ORB.getSound()), config.getBoolean("weightEnabled", false), config.getInt("max_draw_per_times"));
                 lotteryBoxList.add(lotteryBox);
                 Server.getInstance().getLogger().info(LotteryBoxMain.lang.getTranslation("Tips", "LotteryBoxLoaded", lotteryBox.getName()));
             }
+            LotteryBoxMain.lotteryBoxList.sort(Comparator.comparing(LotteryBox::getPriority).reversed());
             Server.getInstance().getLogger().info(LotteryBoxMain.lang.getTranslation("Tips", "LotteryBoxFinish", lotteryBoxList.size()));
         }
     }

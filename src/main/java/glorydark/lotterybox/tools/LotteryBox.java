@@ -34,9 +34,12 @@ public class LotteryBox {
     private final Sound sound;
 
     private final boolean weightEnabled;
+    private final int priority;
+    private final int maxDrawPerTime;
 
-    public LotteryBox(String name, String displayName, List<String> needs, List<String> description, List<Prize> prizes, List<Bonus> bonuses, Integer limit, Boolean spawnFirework, String endParticle, String sound, boolean weightEnabled) {
+    public LotteryBox(String name, int priority, String displayName, List<String> needs, List<String> description, List<Prize> prizes, List<Bonus> bonuses, Integer limit, Boolean spawnFirework, String endParticle, String sound, boolean weightEnabled, int maxDrawPerTime) {
         this.name = name;
+        this.priority = priority;
         this.needs = needs;
         this.description = description;
         this.prizes = prizes;
@@ -48,6 +51,7 @@ public class LotteryBox {
         Optional<Sound> got = Arrays.stream(Sound.values()).filter(get -> get.getSound().equals(sound)).findFirst();
         this.sound = got.orElse(Sound.RANDOM_ORB);
         this.weightEnabled = weightEnabled;
+        this.maxDrawPerTime = maxDrawPerTime;
     }
 
     public void showEndParticle(Player player) {

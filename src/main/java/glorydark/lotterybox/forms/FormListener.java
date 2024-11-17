@@ -54,13 +54,13 @@ public class FormListener implements Listener {
         if (LotteryBoxMain.playingPlayers.contains(player)) {
             return;
         }
+        LotteryBox box = LotteryBoxMain.lotteryBoxList.get(simple.getResponse().getClickedButtonId());
         switch (formType) {
             case SelectLotteryBox:
                 if (!LotteryBoxAPI.isPE(player) && !player.isOnGround()) {
                     player.sendMessage(LotteryBoxMain.lang.getTranslation("Tips", "NoOnGround"));
                     return;
                 }
-                LotteryBox box = LotteryBoxMain.lotteryBoxList.get(simple.getResponse().getClickedButtonId());
                 LotteryBoxMain.playerLotteryBoxes.put(player, box);
                 if (!LotteryBoxAPI.isPE(player) && !LotteryBoxMain.forceDefaultMode) {
                     if (box.isWeightEnabled()) {
@@ -76,7 +76,7 @@ public class FormListener implements Listener {
                 break;
             case LotteryPossibility:
                 if (simple.getResponse().getClickedButtonId() == 0) {
-                    showPESelectSpinWindow(player);
+                    showPESelectSpinWindow(player, box);
                 }
                 break;
         }
