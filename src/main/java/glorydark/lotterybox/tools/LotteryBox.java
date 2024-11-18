@@ -2,6 +2,7 @@ package glorydark.lotterybox.tools;
 
 import cn.nukkit.Player;
 import cn.nukkit.block.Block;
+import cn.nukkit.form.element.ElementButtonImageData;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Sound;
 import cn.nukkit.level.particle.*;
@@ -36,8 +37,9 @@ public class LotteryBox {
     private final boolean weightEnabled;
     private final int priority;
     private final int maxDrawPerTime;
+    private final ElementButtonImageData elementButtonImageData;
 
-    public LotteryBox(String name, int priority, String displayName, List<String> needs, List<String> description, List<Prize> prizes, List<Bonus> bonuses, Integer limit, Boolean spawnFirework, String endParticle, String sound, boolean weightEnabled, int maxDrawPerTime) {
+    public LotteryBox(String name, int priority, String displayName, List<String> needs, List<String> description, List<Prize> prizes, List<Bonus> bonuses, Integer limit, Boolean spawnFirework, String endParticle, String sound, boolean weightEnabled, int maxDrawPerTime, ElementButtonImageData elementButtonImageData) {
         this.name = name;
         this.priority = priority;
         this.needs = needs;
@@ -52,6 +54,7 @@ public class LotteryBox {
         this.sound = got.orElse(Sound.RANDOM_ORB);
         this.weightEnabled = weightEnabled;
         this.maxDrawPerTime = maxDrawPerTime;
+        this.elementButtonImageData = elementButtonImageData;
     }
 
     public void showEndParticle(Player player) {

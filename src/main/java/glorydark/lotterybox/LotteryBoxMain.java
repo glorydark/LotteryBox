@@ -3,6 +3,7 @@ package glorydark.lotterybox;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.entity.item.EntityMinecartChest;
+import cn.nukkit.form.element.ElementButtonImageData;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Sound;
 import cn.nukkit.plugin.PluginBase;
@@ -109,7 +110,16 @@ public class LotteryBoxMain extends PluginBase {
                     }
                     bonuses.add(new Bonus(key, items.toArray(new Item[0]), (List<String>) subMap.get("consolecommands"), (Integer) subMap.get("times")));
                 }
-                LotteryBox lotteryBox = new LotteryBox(file.getName().split("\\.")[0], config.getInt("priority"), config.getString("displayName"), config.getStringList("needs"), config.getStringList("descriptions"), prizes, bonuses, config.getInt("permanentLimit"), config.getBoolean("spawnFirework"), config.getString("endParticle"), config.getString("sound", Sound.RANDOM_ORB.getSound()), config.getBoolean("weightEnabled", false), config.getInt("max_draw_per_time"));
+                ElementButtonImageData elementButtonImageData = null;
+                if (config.exists("button_image_data")) {
+                    String imageData = config.getString("button_image_data");
+                    if (imageData.startsWith("url#")) {
+                        elementButtonImageData = new ElementButtonImageData("url", imageData.replaceFirst("url#", ""));
+                    } else if (imageData.startsWith("path#")) {
+                        elementButtonImageData = new ElementButtonImageData("path", imageData.replaceFirst("path#", ""));
+                    }
+                }
+                LotteryBox lotteryBox = new LotteryBox(file.getName().split("\\.")[0], config.getInt("priority"), config.getString("displayName"), config.getStringList("needs"), config.getStringList("descriptions"), prizes, bonuses, config.getInt("permanentLimit"), config.getBoolean("spawnFirework"), config.getString("endParticle"), config.getString("sound", Sound.RANDOM_ORB.getSound()), config.getBoolean("weightEnabled", false), config.getInt("max_draw_per_time"), elementButtonImageData);
                 lotteryBoxList.add(lotteryBox);
                 Server.getInstance().getLogger().info(LotteryBoxMain.lang.getTranslation("Tips", "LotteryBoxLoaded", lotteryBox.getName()));
             }

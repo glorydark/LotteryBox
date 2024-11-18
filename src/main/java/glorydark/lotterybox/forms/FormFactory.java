@@ -49,7 +49,11 @@ public class FormFactory {
     public static void showSelectLotteryBoxWindow(Player player) {
         FormWindowSimple windowSimple = new FormWindowSimple(LotteryBoxMain.lang.getTranslation("SelectLotteryBoxWindow", "Title"), LotteryBoxMain.lang.getTranslation("SelectLotteryBoxWindow", "Content"));
         for (LotteryBox lotteryBox : LotteryBoxMain.lotteryBoxList) {
-            windowSimple.addButton(new ElementButton(lotteryBox.getDisplayName()));
+            if (lotteryBox.getElementButtonImageData() == null) {
+                windowSimple.addButton(new ElementButton(lotteryBox.getDisplayName()));
+            } else {
+                windowSimple.addButton(new ElementButton(lotteryBox.getDisplayName(), lotteryBox.getElementButtonImageData()));
+            }
         }
         showFormWindow(player, windowSimple, SelectLotteryBox);
     }
