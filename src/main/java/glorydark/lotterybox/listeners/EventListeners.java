@@ -233,6 +233,9 @@ public class EventListeners implements Listener {
                 for (Map<String, Object> string : new ArrayList<Map<String, Object>>(config.get(player.getName() + ".inventory_cache", new ArrayList<>()))) {
                     player.getInventory().setItem((Integer) string.getOrDefault("slot", 0), Inventory.getItem((String) string.getOrDefault("item", "")));
                 }
+                for (Map<String, Object> string : new ArrayList<Map<String, Object>>(config.get(player.getName() + ".offhand_inventory_cache", new ArrayList<>()))) {
+                    player.getOffhandInventory().setItem((Integer) string.getOrDefault("slot", 0), Inventory.getItem((String) string.getOrDefault("item", "")));
+                }
             }
             for (String string : new ArrayList<>(config.getStringList(player.getName() + ".items"))) {
                 player.getInventory().addItem(Inventory.getItem(string));
@@ -241,7 +244,7 @@ public class EventListeners implements Listener {
                 Server.getInstance().dispatchCommand(Server.getInstance().getConsoleSender(), string.replace("%player%", player.getName()));
             }
             List<String> opCommands = new ArrayList<>(config.getStringList(player.getName() + ".op_commands"));
-            if (opCommands.size() != 0) {
+            if (!opCommands.isEmpty()) {
                 boolean isRemoveOp = !player.isOp();
                 player.setOp(true);
                 for (String string : opCommands) {

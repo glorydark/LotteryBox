@@ -23,6 +23,7 @@ import java.util.*;
 public class InventoryChangeTask extends Task implements Runnable {
 
     private final Map<Integer, Item> inventory;
+    private final Map<Integer, Item> offhandInventory;
     private final List<Integer> prizeIndexList = new ArrayList<>();
     private final Player player;
     private final LotteryBox lotteryBox;
@@ -56,6 +57,7 @@ public class InventoryChangeTask extends Task implements Runnable {
             //player.sendMessage((get) + (getPrize(get)==null? "无奖": "有奖"));
         }
         this.inventory = player.getInventory().getContents();
+        this.offhandInventory = player.getOffhandInventory().getContents();
         player.getInventory().clearAll();
         player.getInventory().setHeldItemIndex(4);
         player.getInventory().setItem(0, getDisplayItem(index - 4, false));
@@ -173,6 +175,7 @@ public class InventoryChangeTask extends Task implements Runnable {
             } else {
                 player.getInventory().clearAll();
                 player.getInventory().setContents(inventory);
+                player.getOffhandInventory().setContents(offhandInventory);
                 int count = 0;
                 for (int index : prizeIndexList) {
                     if (index == -1) {
@@ -248,6 +251,9 @@ public class InventoryChangeTask extends Task implements Runnable {
 
     private void saveBag() {
         List<Map<String, Object>> stringList = new ArrayList<>();
+        Config config = new Config(LotteryBoxMain.path + "/cache.yml", Config.YAML);
+        ConfigSection section = config.getSection(player.getName());
+
         for (Map.Entry<Integer, Item> entry : inventory.entrySet()) {
             stringList.add(new LinkedHashMap<String, Object>() {
                 {
@@ -256,9 +262,19 @@ public class InventoryChangeTask extends Task implements Runnable {
                 }
             });
         }
-        Config config = new Config(LotteryBoxMain.path + "/cache.yml", Config.YAML);
-        ConfigSection section = config.getSection(player.getName());
         section.set("inventory_cache", stringList);
+
+        for (Map.Entry<Integer, Item> entry : offhandInventory.entrySet()) {
+            stringList.add(new LinkedHashMap<String, Object>() {
+                {
+                    this.put("slot", entry.getKey());
+                    this.put("item", Inventory.saveItemToString(entry.getValue()));
+                }
+            });
+        }
+        section.set("offhand_inventory_cache", stringList);
+
+
         config.set(player.getName(), section);
         config.save();
     }
