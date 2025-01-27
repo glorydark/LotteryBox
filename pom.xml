@@ -24,7 +24,7 @@
     <dependencies>
         <dependency>
             <groupId>cn.nukkit</groupId>
-            <artifactId>nukkit</artifactId>
+            <artifactId>Nukkit</artifactId>
             <version>MOT-java8-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
