@@ -9,8 +9,8 @@
     <version>1.2.7</version>
 
     <properties>
-        <maven.compiler.source>8</maven.compiler.source>
-        <maven.compiler.target>8</maven.compiler.target>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
         <maven.compiler.sourceEncoding>UTF-8</maven.compiler.sourceEncoding>
     </properties>
 
