@@ -67,8 +67,12 @@ public class FormFactory {
 
     public static void showLotteryPossibilityWindow(Player player, LotteryBox box) {
         FormWindowSimple simple = new FormWindowSimple(LotteryBoxMain.lang.getTranslation("ShowPossibilityWindow", "Title", box.getName()), "");
+        String variable = LotteryBoxMain.lang.getTranslation("ShowPossibilityWindow", "Subtitle_Variable_" + box.getName());
         StringBuilder builder = new StringBuilder();
-        builder.append(LotteryBoxMain.lang.getTranslation("ShowPossibilityWindow", "Subtitle", LotteryBoxAPI.getLotteryPlayTimes(player.getName(), box.getName()))).append("\n").append(LotteryBoxMain.lang.getTranslation("ShowPossibilityWindow", "Subtitle_1", box.getName())).append("\n");
+        builder.append(LotteryBoxMain.lang.getTranslation("ShowPossibilityWindow", "Subtitle", LotteryBoxAPI.getLotteryPlayTimes(player.getName(), box.getName())))
+                .append("\n")
+                .append(LotteryBoxMain.lang.getTranslation("ShowPossibilityWindow", "Subtitle_1", box.getName()))
+                .append("\n");
         for (String string : box.getNeeds()) {
             if (string.startsWith("ticket|")) {
                 String[] strings = string.replace("ticket|", "").split("@");
@@ -114,7 +118,10 @@ public class FormFactory {
                 builder.append(LotteryBoxMain.lang.getTranslation("ShowPossibilityWindow", "Prize_Format", prize.getRarity(), prize.getName(), format.format((float) prize.getPossibility() / 10000) + "%", prize.getDescription())).append("\n");
             }
         }
-        simple.setContent(builder.toString());
+        simple.setContent(
+                builder.toString().replace("{variable.box.content}", variable)
+                        .replace("\\n", "\n")
+        );
         simple.addButton(new ElementButton("立即抽奖"));
         showFormWindow(player, simple, FormType.LotteryPossibility);
     }

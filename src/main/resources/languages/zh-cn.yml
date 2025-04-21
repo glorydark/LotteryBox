@@ -64,6 +64,7 @@ RewardWindow:
   PrizeNone: "无"
 ShowPossibilityWindow:
   Title: "抽奖箱 [%1%] 介绍"
+  Subtitle_Variable_test: "这是test箱子的介绍" # test是箱子的文件名，不带后缀，下面用{variable.box.content}即可
   Subtitle: "已抽奖次数: %1%"
   Subtitle_1: "所需抽奖券："
   NeedTicket_Enough_Format: "抽奖券 [%1%] * %2% (已拥有: §a%3%§f 个)"
