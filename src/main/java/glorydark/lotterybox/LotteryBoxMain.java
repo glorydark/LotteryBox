@@ -239,10 +239,10 @@ public class LotteryBoxMain extends PluginBase {
 
         @Override
         public void strReplace() {
-            for (String ticket : registered_tickets) {
+            for (String ticket : new ArrayList<>(registered_tickets)) {
                 this.addStrReplaceString("{lotterybox_tickets_" + ticket + "}", String.valueOf(LotteryBoxAPI.getTicketCounts(player.getName(), ticket)));
             }
-            for (LotteryBox box : lotteryBoxList) {
+            for (LotteryBox box : new ArrayList<>(lotteryBoxList)) {
                 this.addStrReplaceString("{lotterybox_playtimes_" + box.getName() + "}", String.valueOf(LotteryBoxAPI.getLotteryPlayTimes(player.getName(), box.getName())));
             }
         }
@@ -254,10 +254,10 @@ public class LotteryBoxMain extends PluginBase {
             if (player == null) {
                 return;
             }
-            for (String ticket : registered_tickets) {
+            for (String ticket : new ArrayList<>(registered_tickets)) {
                 this.addVariable("{lotterybox_tickets_" + ticket + "}", String.valueOf(LotteryBoxAPI.getTicketCounts(player.getName(), ticket)));
             }
-            for (LotteryBox box : lotteryBoxList) {
+            for (LotteryBox box : new ArrayList<>(lotteryBoxList)) {
                 this.addVariable("{lotterybox_playtimes_" + box.getName() + "}", String.valueOf(LotteryBoxAPI.getLotteryPlayTimes(player.getName(), box.getName())));
             }
         }
