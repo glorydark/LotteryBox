@@ -18,7 +18,7 @@ public class Inventory {
     );
 
     private static byte[] hexStringToBytes(String hexString) {
-        if (hexString == null || hexString.equals("")) {
+        if (hexString == null || hexString.isEmpty() || hexString.equals("null")) {
             return null;
         }
         hexString = hexString.toUpperCase();
