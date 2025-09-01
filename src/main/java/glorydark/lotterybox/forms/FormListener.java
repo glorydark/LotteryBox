@@ -92,9 +92,9 @@ public class FormListener implements Listener {
             if (box.checkLimit(player.getName(), spin)) {
                 if (box.deductNeeds(player, spin)) {
                     if (box.isWeightEnabled()) {
-                        Server.getInstance().getScheduler().scheduleRepeatingTask(new InventoryChangeTaskV2(player, LotteryBoxMain.playerLotteryBoxes.get(player), spin), LotteryBoxMain.default_speed_ticks);
+                        Server.getInstance().getScheduler().scheduleRepeatingTask(LotteryBoxMain.instance, new InventoryChangeTaskV2(player, LotteryBoxMain.playerLotteryBoxes.get(player), spin), LotteryBoxMain.default_speed_ticks);
                     } else {
-                        Server.getInstance().getScheduler().scheduleRepeatingTask(new InventoryChangeTask(player, LotteryBoxMain.playerLotteryBoxes.get(player), spin), LotteryBoxMain.default_speed_ticks);
+                        Server.getInstance().getScheduler().scheduleRepeatingTask(LotteryBoxMain.instance, new InventoryChangeTask(player, LotteryBoxMain.playerLotteryBoxes.get(player), spin), LotteryBoxMain.default_speed_ticks);
                     }
                 } else {
                     Server.getInstance().getPluginManager().callEvent(new LotteryForceCloseEvent(player));

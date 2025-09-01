@@ -194,7 +194,7 @@ public class EventListeners implements Listener {
         }
         if (lotteryBox.checkLimit(player.getName(), spin)) {
             if (lotteryBox.deductNeeds(player, spin)) {
-                Server.getInstance().getScheduler().scheduleRepeatingTask(new LotteryBoxChangeTask(LotteryBoxMain.chestList.get(player), player, lotteryBox, spin), LotteryBoxMain.chest_speed_ticks);
+                Server.getInstance().getScheduler().scheduleRepeatingTask(LotteryBoxMain.instance, new LotteryBoxChangeTask(LotteryBoxMain.chestList.get(player), player, lotteryBox, spin), LotteryBoxMain.chest_speed_ticks);
             } else {
                 Server.getInstance().getPluginManager().callEvent(new LotteryForceCloseEvent(player));
             }
