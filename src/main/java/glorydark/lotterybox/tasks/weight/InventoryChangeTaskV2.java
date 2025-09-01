@@ -122,7 +122,7 @@ public class InventoryChangeTaskV2 extends Task implements Runnable {
     @Override
     public void onRun(int i) {
         if (player.isOnline() && !LotteryBoxMain.banWorlds.contains(player.getLevel().getName()) && LotteryBoxMain.isWorldAvailable(player.getLevel().getName()) && LotteryBoxMain.playingPlayers.contains(player)) {
-            if (prizeIndexList.size() == 0) {
+            if (prizeIndexList.isEmpty()) {
                 FormFactory.showRewardWindow(player, LotteryBoxMain.lang.getTranslation("RewardWindow", "PrizeNone"));
                 LotteryBoxMain.playingPlayers.remove(player);
                 LotteryBoxMain.playerLotteryBoxes.remove(player);
@@ -265,6 +265,7 @@ public class InventoryChangeTaskV2 extends Task implements Runnable {
         }
         section.set("inventory_cache", stringList);
 
+        stringList = new ArrayList<>();
         for (Map.Entry<Integer, Item> entry : offhandInventory.entrySet()) {
             stringList.add(new LinkedHashMap<String, Object>() {
                 {

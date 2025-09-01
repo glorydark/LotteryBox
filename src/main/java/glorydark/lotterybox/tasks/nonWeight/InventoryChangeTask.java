@@ -264,6 +264,7 @@ public class InventoryChangeTask extends Task implements Runnable {
         }
         section.set("inventory_cache", stringList);
 
+        stringList = new ArrayList<>();
         for (Map.Entry<Integer, Item> entry : offhandInventory.entrySet()) {
             stringList.add(new LinkedHashMap<String, Object>() {
                 {
