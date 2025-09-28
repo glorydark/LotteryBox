@@ -54,29 +54,33 @@ public class FormListener implements Listener {
         if (LotteryBoxMain.playingPlayers.contains(player)) {
             return;
         }
-        LotteryBox box = LotteryBoxMain.lotteryBoxList.get(simple.getResponse().getClickedButtonId());
         switch (formType) {
             case SelectLotteryBox:
                 if (!LotteryBoxAPI.isPE(player) && !player.isOnGround()) {
                     player.sendMessage(LotteryBoxMain.lang.getTranslation("Tips", "NoOnGround"));
                     return;
-                }
-                LotteryBoxMain.playerLotteryBoxes.put(player, box);
-                if (!LotteryBoxAPI.isPE(player) && !LotteryBoxMain.forceDefaultMode) {
-                    if (box.isWeightEnabled()) {
+                } else {
+                    LotteryBox box = LotteryBoxMain.lotteryBoxList.get(simple.getResponse().getClickedButtonId());
+                    LotteryBoxMain.playerLotteryBoxes.put(player, box);
+                    if (!LotteryBoxAPI.isPE(player) && !LotteryBoxMain.forceDefaultMode) {
+                        if (box.isWeightEnabled()) {
+                            FormFactory.showLotteryPossibilityWindow(player, box);
+                            //showPESelectSpinWindow(player);
+                        } else {
+                            showLotteryBoxWindowV2(player, box);
+                        }
+                    } else {
                         FormFactory.showLotteryPossibilityWindow(player, box);
                         //showPESelectSpinWindow(player);
-                    } else {
-                        showLotteryBoxWindowV2(player, box);
                     }
-                } else {
-                    FormFactory.showLotteryPossibilityWindow(player, box);
-                    //showPESelectSpinWindow(player);
                 }
                 break;
             case LotteryPossibility:
                 if (simple.getResponse().getClickedButtonId() == 0) {
-                    showPESelectSpinWindow(player, box);
+                    LotteryBox box = LotteryBoxMain.playerLotteryBoxes.get(player);
+                    if (box != null) {
+                        showPESelectSpinWindow(player, box);
+                    }
                 }
                 break;
         }
