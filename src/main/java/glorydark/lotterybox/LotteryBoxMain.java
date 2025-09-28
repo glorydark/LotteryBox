@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.logging.FileHandler;
+import java.util.logging.Handler;
 import java.util.logging.Logger;
 
 public class LotteryBoxMain extends PluginBase {
@@ -82,7 +83,7 @@ public class LotteryBoxMain extends PluginBase {
     }
 
     public static void loadBoxesConfig() {
-        File folder = new File(path + "/boxes/");
+        File folder = new File(path + File.separator + "boxes" + File.separator);
         lotteryBoxList.clear();
         if (folder.exists()) {
             for (File file : Objects.requireNonNull(folder.listFiles())) {
@@ -134,6 +135,12 @@ public class LotteryBoxMain extends PluginBase {
         return format.format(date);
     }
 
+    public static String getDateRough(long millis) {
+        Date date = new Date(millis);
+        SimpleDateFormat format = new SimpleDateFormat("yyyy年MM月dd日");
+        return format.format(date);
+    }
+
     @Override
     public void onLoad() {
         this.getLogger().info("LotteryBox onLoad!");
@@ -141,30 +148,32 @@ public class LotteryBoxMain extends PluginBase {
 
     @Override
     public void onEnable() {
-        saveDefaultConfig();
-        new File(path + "/languages/").mkdirs();
-        new File(path + "/lottery_records/").mkdirs();
-        new File(path + "/prize_records/").mkdirs();
-        new File(path + "/boxes/").mkdirs();
-        new File(path + "/tickets/").mkdirs();
-        this.saveResource("languages/zh-cn.yml", false);
-        this.saveResource("rarity.yml", false);
-
         path = this.getDataFolder().getPath();
         instance = this;
-        log = Logger.getLogger("LotteryBox_" + UUID.randomUUID());
-        new File(path + "/logs/").mkdirs();
+        new File(path + File.separator + "logs" + File.separator).mkdirs();
+        new File(path + File.separator + "languages" + File.separator).mkdirs();
+        new File(path + File.separator + "lottery_records" + File.separator).mkdirs();
+        new File(path + File.separator + "prize_records" + File.separator).mkdirs();
+        new File(path + File.separator + "boxes" + File.separator).mkdirs();
+        new File(path + File.separator + "tickets" + File.separator).mkdirs();
 
+
+        saveDefaultConfig();
+        this.saveResource("languages" + File.separator + "zh-cn.yml", false);
+        this.saveResource("rarity.yml", false);
+
+        log = Logger.getLogger("LotteryBox_" + UUID.randomUUID());
+        log.setUseParentHandlers(false);
         FileHandler fileHandler;
         try {
-            fileHandler = new FileHandler(path + "/logs/" + getDate(System.currentTimeMillis()) + ".log");
+            fileHandler = new FileHandler(path + File.separator + "logs" + File.separator + getDateRough(System.currentTimeMillis()) + ".log");
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
         fileHandler.setFormatter(new LoggerFormatter());
         log.addHandler(fileHandler);
 
-        Config config = new Config(path + "/config.yml", Config.YAML);
+        Config config = new Config(path + File.separator + "config.yml", Config.YAML);
         if (config.getInt("version", 0) != 2022082002) {
             updateConfig();
             if (config.exists("registered_tickets")) {
@@ -185,7 +194,7 @@ public class LotteryBoxMain extends PluginBase {
         registered_tickets = new ArrayList<>(config.getStringList("registered_tickets"));
         ticketPrice = config.get("ticket_price_economyapi", new LinkedHashMap<>());
         String language = config.getString("language");
-        lang = new Lang(new File(this.getDataFolder() + "/languages/" + language + ".yml"));
+        lang = new Lang(new File(this.getDataFolder() + File.separator + "languages" + File.separator + language + ".yml"));
         economyAPIEnabled = Server.getInstance().getPluginManager().getPlugin("EconomyAPI") != null;
         if (economyAPIEnabled) {
             this.getLogger().info(LotteryBoxMain.lang.getTranslation("Tips", "DependencyFound", "EconomyAPI"));
@@ -194,7 +203,7 @@ public class LotteryBoxMain extends PluginBase {
         }
         //this.getServer().getCommandMap().register("", new TestCommand("test"));
         this.getServer().getCommandMap().register("", new MainCommand("lotterybox"));
-        Config rarityCfg = new Config(path + "/rarity.yml", Config.YAML);
+        Config rarityCfg = new Config(path + File.separator + "rarity.yml", Config.YAML);
         for (String key : rarityCfg.getKeys(false)) {
             rarities.put(key, new Rarity(rarityCfg.getString(key + ".blockParticle", "default")));
         }
@@ -214,7 +223,7 @@ public class LotteryBoxMain extends PluginBase {
     }
 
     public void updateConfig() {
-        File folder = new File(path + "/boxes/");
+        File folder = new File(path + File.separator + "boxes" + File.separator);
         if (folder.exists()) {
             for (File file : Objects.requireNonNull(folder.listFiles())) {
                 Config config = new Config(file, Config.YAML);
@@ -228,6 +237,9 @@ public class LotteryBoxMain extends PluginBase {
 
     @Override
     public void onDisable() {
+        for (Handler handler : log.getHandlers()) {
+            handler.close();
+        }
         this.getLogger().info("LotteryBox onDisabled!");
     }
 

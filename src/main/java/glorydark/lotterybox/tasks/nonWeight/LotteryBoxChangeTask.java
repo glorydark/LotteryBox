@@ -20,6 +20,7 @@ import glorydark.lotterybox.tools.Inventory;
 import glorydark.lotterybox.tools.LotteryBox;
 import glorydark.lotterybox.tools.Prize;
 
+import java.io.File;
 import java.util.*;
 
 public class LotteryBoxChangeTask extends Task implements Runnable {
@@ -222,7 +223,7 @@ public class LotteryBoxChangeTask extends Task implements Runnable {
     }
 
     private void saveItem(Item[] items) {
-        Config config = new Config(LotteryBoxMain.path + "/cache.yml", Config.YAML);
+        Config config = new Config(LotteryBoxMain.path + File.separator + "cache.yml", Config.YAML);
         List<String> stringList = new ArrayList<>(config.getStringList(player.getName() + ".items"));
         for (Item item : items) {
             if (item.getId() == 0 || item.getId() == 255) {
@@ -237,7 +238,7 @@ public class LotteryBoxChangeTask extends Task implements Runnable {
     }
 
     private void saveConsoleCommand(String command) {
-        Config config = new Config(LotteryBoxMain.path + "/cache.yml", Config.YAML);
+        Config config = new Config(LotteryBoxMain.path + File.separator + "cache.yml", Config.YAML);
 
         List<String> stringList = new ArrayList<>(config.getStringList(player.getName() + ".console_commands"));
         stringList.add(command);
@@ -248,7 +249,7 @@ public class LotteryBoxChangeTask extends Task implements Runnable {
     }
 
     private void saveOpCommand(String command) {
-        Config config = new Config(LotteryBoxMain.path + "/cache.yml", Config.YAML);
+        Config config = new Config(LotteryBoxMain.path + File.separator + "cache.yml", Config.YAML);
         List<String> stringList = new ArrayList<>(config.getStringList(player.getName() + ".op_commands"));
         stringList.add(command);
         ConfigSection section = config.getSection(player.getName());
@@ -258,7 +259,7 @@ public class LotteryBoxChangeTask extends Task implements Runnable {
     }
 
     private void saveMessage(String message) {
-        Config config = new Config(LotteryBoxMain.path + "/cache.yml", Config.YAML);
+        Config config = new Config(LotteryBoxMain.path + File.separator + "cache.yml", Config.YAML);
         List<String> stringList = new ArrayList<>(config.getStringList(player.getName() + ".messages"));
         stringList.add(message);
         ConfigSection section = config.getSection(player.getName());

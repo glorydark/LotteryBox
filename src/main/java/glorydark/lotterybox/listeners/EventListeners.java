@@ -210,7 +210,7 @@ public class EventListeners implements Listener {
             Player p = (Player) event.getEntity();
             if (LotteryBoxMain.playingPlayers.contains(p)) {
                 for (String path : LotteryBoxMain.inventory_cache_paths) {
-                    File file = new File((Server.getInstance().getFilePath() + "/" + path + "/").replace("%player%", p.getName()));
+                    File file = new File((Server.getInstance().getFilePath() + File.separator + path + File.separator).replace("%player%", p.getName()));
                     if (file.exists()) {
                         Config config = new Config(file);
                         config.set("inventoryContents", new HashMap<>());
@@ -226,7 +226,7 @@ public class EventListeners implements Listener {
     @EventHandler
     public void onJoin(PlayerLocallyInitializedEvent event) {
         Player player = event.getPlayer();
-        Config config = new Config(LotteryBoxMain.path + "/cache.yml", Config.YAML);
+        Config config = new Config(LotteryBoxMain.path + File.separator + "cache.yml", Config.YAML);
         if (config.exists(player.getName())) {
             if (LotteryBoxMain.save_bag_enabled) {
                 player.getInventory().clearAll();

@@ -5,6 +5,7 @@ spawnFirework: true
 endParticle: hugeexplosion
 weightEnabled: true
 sound: "random.orb"
+max_draw_per_time: 30
 descriptions:
   - '内含奖品:'
   - '[ 233 ] * 1天'

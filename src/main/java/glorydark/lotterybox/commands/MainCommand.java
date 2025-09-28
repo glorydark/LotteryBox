@@ -109,7 +109,7 @@ public class MainCommand extends Command {
                 if (commandSender instanceof Player) {
                     if (commandSender.isOp()) {
                         if (strings.length == 2) {
-                            Config config = new Config(LotteryBoxMain.path + "/saveitem.yml", Config.YAML);
+                            Config config = new Config(LotteryBoxMain.path + File.separator + "saveitem.yml", Config.YAML);
                             if (!config.exists(strings[1])) {
                                 config.set(strings[1], Inventory.saveItemToString(((Player) commandSender).getInventory().getItemInHand()));
                                 commandSender.sendMessage(LotteryBoxMain.lang.getTranslation("Tips", "SaveItemSuccessfully"));
@@ -130,7 +130,7 @@ public class MainCommand extends Command {
                 break;
             case "reload":
                 if (!(commandSender instanceof Player) || commandSender.isOp()) {
-                    Config config = new Config(LotteryBoxMain.path + "/config.yml", Config.YAML);
+                    Config config = new Config(LotteryBoxMain.path + File.separator + "config.yml", Config.YAML);
                     LotteryBoxMain.forceDefaultMode = config.getBoolean("force_default_mode", false);
                     LotteryBoxMain.default_speed_ticks = config.getInt("default_speed_ticks", 4);
                     LotteryBoxMain.chest_speed_ticks = config.getInt("chest_speed_ticks", 4);
@@ -142,7 +142,7 @@ public class MainCommand extends Command {
                     LotteryBoxMain.save_bag_enabled = config.getBoolean("save_bag_enabled", true);
                     LotteryBoxMain.registered_tickets = new ArrayList<>(config.getStringList("registered_tickets"));
                     String language = config.getString("language");
-                    LotteryBoxMain.lang = new Lang(new File(LotteryBoxMain.path + "/languages/" + language + ".yml"));
+                    LotteryBoxMain.lang = new Lang(new File(LotteryBoxMain.path + File.separator + "languages" + File.separator + language + ".yml"));
                     LotteryBoxMain.loadBoxesConfig();
                     commandSender.sendMessage(LotteryBoxMain.lang.getTranslation("Tips", "ReloadFinish"));
                 } else {
@@ -152,9 +152,9 @@ public class MainCommand extends Command {
             case "createbox":
                 if (!(commandSender instanceof Player) || commandSender.isOp()) {
                     if (strings.length == 2) {
-                        File file = new File(LotteryBoxMain.path + "/boxes/" + strings[1] + ".yml");
+                        File file = new File(LotteryBoxMain.path + File.separator + "boxes" + File.separator + strings[1] + ".yml");
                         if (!file.exists()) {
-                            LotteryBoxMain.instance.saveResource("default.yml", "boxes/" + strings[1] + ".yml", false);
+                            LotteryBoxMain.instance.saveResource("default.yml", "boxes" + File.separator + strings[1] + ".yml", false);
                             commandSender.sendMessage(LotteryBoxMain.lang.getTranslation("Tips", "CreateLotteryBoxSuccessfully", strings[1]));
                         } else {
                             commandSender.sendMessage(LotteryBoxMain.lang.getTranslation("Tips", "LotteryBoxExisted", strings[1]));

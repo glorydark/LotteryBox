@@ -6,21 +6,22 @@ import cn.nukkit.utils.Config;
 import cn.nukkit.utils.ConfigSection;
 import glorydark.lotterybox.LotteryBoxMain;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 public class LotteryBoxAPI {
 
     public static boolean checkTicketCounts(String player, String ticket, Integer counts) {
-        return new Config(LotteryBoxMain.path + "/tickets/" + player + ".yml", Config.YAML).getInt(ticket, 0) >= counts;
+        return new Config(LotteryBoxMain.path + File.separator + "tickets" + File.separator + player + ".yml", Config.YAML).getInt(ticket, 0) >= counts;
     }
 
     public static int getTicketCounts(String player, String ticket) {
-        return new Config(LotteryBoxMain.path + "/tickets/" + player + ".yml", Config.YAML).getInt(ticket, 0);
+        return new Config(LotteryBoxMain.path + File.separator + "tickets" + File.separator + player + ".yml", Config.YAML).getInt(ticket, 0);
     }
 
     public static void setTicketCounts(String player, String ticket, Integer amount) {
-        Config config = new Config(LotteryBoxMain.path + "/tickets/" + player + ".yml", Config.YAML);
+        Config config = new Config(LotteryBoxMain.path + File.separator + "tickets" + File.separator + player + ".yml", Config.YAML);
         config.set(ticket, amount);
         config.save();
     }
@@ -30,21 +31,21 @@ public class LotteryBoxAPI {
     }
 
     public static Integer getLotteryPlayTimes(String player, String lotteryName) {
-        return new Config(LotteryBoxMain.path + "/lottery_records/" + player + ".yml", Config.YAML).getInt(lotteryName, 0);
+        return new Config(LotteryBoxMain.path + File.separator + "lottery_records" + File.separator + player + ".yml", Config.YAML).getInt(lotteryName, 0);
     }
 
     public static void setLotteryPlayTimes(String player, String lotteryName, Integer amount) {
-        Config config = new Config(LotteryBoxMain.path + "/lottery_records/" + player + ".yml", Config.YAML);
+        Config config = new Config(LotteryBoxMain.path + File.separator + "lottery_records" + File.separator + player + ".yml", Config.YAML);
         config.set(lotteryName, amount);
         config.save();
     }
 
     public static int getLotteryPrizeTimes(String player, String lotteryName, String prize) {
-        return new Config(LotteryBoxMain.path + "/prize_records/" + player + ".yml", Config.YAML).getSection(lotteryName).getInt(prize);
+        return new Config(LotteryBoxMain.path + File.separator + "prize_records" + File.separator + player + ".yml", Config.YAML).getSection(lotteryName).getInt(prize);
     }
 
     public static void changeLotteryPrizeTimes(String player, String lotteryName, String prize) {
-        Config config = new Config(LotteryBoxMain.path + "/prize_records/" + player + ".yml", Config.YAML);
+        Config config = new Config(LotteryBoxMain.path + File.separator + "prize_records" + File.separator + player + ".yml", Config.YAML);
         if (!config.exists(lotteryName)) {
             config.set(lotteryName, new ConfigSection());
         }
